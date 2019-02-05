@@ -1,21 +1,27 @@
 import path from 'path';
 import fs, {readJSONSync} from 'fs-extra';
-import { getModuleRoot } from './project-util';
+import { getToolkitRoot, getProjectPackage } from './project-util';
 
 export default class Project {
+  projectName: String;
+  projectRoot: String;
+  projectPkg: { [key: string]: any };
+
   constructor({
-    moduleRoot = getModuleRoot(),
+    moduleRoot = getToolkitRoot(),
     cwd
   }: {
     moduleRoot?: string,
     cwd?: string
   } = {}) {
     try {
-      const modulePackage = fs.readJSONSync(path.join(moduleRoot, "package.json"));
-      console.log(modulePackage);
-      // const {pkg: projectPkg, root: projectRoot } = getProjectPackage(moduleRoot, modulePackage);
+      const toolkitPackage = fs.readJSONSync(path.join(moduleRoot, "package.json"));
+      const {pkg: projectPkg, root: projectRoot } = getProjectPackage(moduleRoot, toolkitPackage);
+      this.projectName = projectPkg.name;
+      this.projectRoot = projectRoot;
+      this.projectPkg = projectPkg;
     } catch (e) {
-      console.error(e);
+      console.error(e, "Cannot initialize project.");
       process.exit(1);
     }
   }

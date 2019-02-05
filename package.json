@@ -27,12 +27,14 @@
   "author": "Matan Kushner <matan.kushner@auth0.com>",
   "devDependencies": {
     "@types/fs-extra": "^5.0.4",
+    "@types/globby": "^8.0.0",
     "@types/node": "^10.12.21",
     "@types/read-pkg-up": "^3.0.1",
     "@zeit/ncc": "^0.14.0"
   },
   "dependencies": {
     "fs-extra": "^7.0.1",
+    "globby": "^9.0.0",
     "node-fs-extra": "^0.8.2",
     "read-pkg-up": "^4.0.0",
     "ts-node": "^8.0.2",

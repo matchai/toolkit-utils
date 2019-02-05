@@ -10,7 +10,7 @@ export default class ScriptKit {
   constructor(scriptFile: string) {
     const file = project.hasScript(scriptFile);
     if (!file) {
-      throw new Error(`Script "${scriptFile}" cannot be found in "${project.scriptsDir}"`)
+      throw new Error(`Script "${scriptFile}" cannot be found in "${project.scriptsDir}"`);
     }
     this.scriptFile = fs.statSync(file).isDirectory() ? require.resolve(file) : file;
   }

@@ -3,11 +3,11 @@
     "strict": true,
     "module": "commonJS",
     "target": "esnext",
-    "outDir": "lib",
+    "outDir": "dist",
     "sourceMap": true,
     "declaration": true,
     "esModuleInterop": true
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "lib", "**/*.spec.ts", "**/*.test.ts"]
+  "exclude": ["node_modules", "dist", "**/*.spec.ts", "**/*.test.ts"]
 }

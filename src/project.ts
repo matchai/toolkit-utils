@@ -11,8 +11,8 @@ import { ScriptResult, Executable } from "./@types";
 import { SpawnSyncOptions } from "child_process";
 
 export default class Project {
-  private projectName: string
-  private projectRoot: string
+  private projectName: string;
+  private projectRoot: string;
   private projectPkg: { [key: string]: any } = {};
   debug: boolean;
 
@@ -38,7 +38,7 @@ export default class Project {
         logger.warn("Debug mode is on");
       }
     } catch (e) {
-      throw new Error(e + "\nCannot initialize project.")
+      throw new Error(e + "\nCannot initialize project.");
     }
   }
 

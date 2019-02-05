@@ -211,7 +211,7 @@ export default class Project {
   /**
    * Executes a script based on the script name that was passed in `process.argv`.
    */
-  executeFromCLI(): never | ScriptResult | Array<ScriptResult> | undefined {
+  executeFromCLI(): never {
     const [executor, ignoredBin, script, ...args] = process.argv;
     const command = `"${path.basename(ignoredBin)} ${`${script} ${args.join(" ")}`.trim()}"`;
 

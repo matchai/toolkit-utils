@@ -5,11 +5,7 @@ import logger from "signale";
 import spawn from "cross-spawn";
 import { pickBy } from "lodash";
 import ScriptKit from "./script-kit";
-import {
-  getToolkitRoot,
-  getProjectPackage,
-  printHelp
-} from "./helpers/project-util";
+import { getToolkitRoot, getProjectPackage, printHelp } from "./helpers/project-util";
 import { ScriptResult, Executable } from "./@types";
 import { SpawnSyncOptions } from "child_process";
 
@@ -29,13 +25,8 @@ export default class Project {
     debug?: boolean;
   } = {}) {
     try {
-      const toolkitPackage = fs.readJSONSync(
-        path.join(toolkitRoot, "package.json")
-      );
-      const { pkg: projectPkg, root: projectRoot } = getProjectPackage(
-        toolkitRoot,
-        toolkitPackage
-      );
+      const toolkitPackage = fs.readJSONSync(path.join(toolkitRoot, "package.json"));
+      const { pkg: projectPkg, root: projectRoot } = getProjectPackage(toolkitRoot, toolkitPackage);
       this.projectName = projectPkg.name;
       this.projectRoot = projectRoot;
       this.projectPkg = projectPkg;
@@ -171,10 +162,7 @@ export default class Project {
    * @param executable - The name of the executable.
    */
   bin(executable: string): string {
-    const relative = path.relative(
-      process.cwd(),
-      this.fromRoot(`node_modules/.bin/${executable}`)
-    );
+    const relative = path.relative(process.cwd(), this.fromRoot(`node_modules/.bin/${executable}`));
     return `.${path.sep}${relative}`;
   }
 
@@ -184,28 +172,12 @@ export default class Project {
    * @param killOthers - Whether all scripts should be killed if one fails.
    * @returns - Arguments to use with concurrently
    */
-  getConcurrentlyArgs(
-    scripts: { [key: string]: Executable | null | undefined },
-    { killOthers = true } = {}
-  ): Array<string> {
-    const colors = [
-      "bgBlue",
-      "bgGreen",
-      "bgMagenta",
-      "bgCyan",
-      "bgWhite",
-      "bgRed",
-      "bgBlack",
-      "bgYellow"
-    ];
+  getConcurrentlyArgs(scripts: { [key: string]: Executable | null | undefined }, { killOthers = true } = {}): Array<string> {
+    const colors = ["bgBlue", "bgGreen", "bgMagenta", "bgCyan", "bgWhite", "bgRed", "bgBlack", "bgYellow"];
 
     const fullScripts = pickBy(scripts) as { [key: string]: Executable }; // Clear empty keys
     const prefixColors = Object.keys(fullScripts)
-      .reduce(
-        (pColors, _s, i) =>
-          pColors.concat([`${colors[i % colors.length]}.bold.reset}`]),
-        [] as Array<string>
-      )
+      .reduce((pColors, _s, i) => pColors.concat([`${colors[i % colors.length]}.bold.reset}`]), [] as Array<string>)
       .join(",");
 
     // prettier-ignore
@@ -223,17 +195,12 @@ export default class Project {
    * @param scriptFile - The script file to execute from the "scripts" directory.
    * @param args - A list of arguments to be passed to the script function.
    */
-  executeScriptFile(
-    scriptFile: string,
-    args: Array<string> = []
-  ): ScriptResult | Array<ScriptResult> {
+  executeScriptFile(scriptFile: string, args: Array<string> = []): ScriptResult | Array<ScriptResult> {
     debugger;
     const file = this.fromScriptsDir(scriptFile);
     const { script: scriptFunction } = require(file);
     if (typeof scriptFunction !== "function") {
-      logger.error(
-        new Error(`${scriptFile} does not export a \"script\" function.`)
-      );
+      logger.error(new Error(`${scriptFile} does not export a \"script\" function.`));
       process.exit(1);
     }
 
@@ -244,15 +211,9 @@ export default class Project {
    * Executes a script based on the script name that was passed in `process.argv`.
    * @param exit - TODO: Get back to this
    */
-  executeFromCLI({ exit = true } = {}):
-    | never
-    | ScriptResult
-    | Array<ScriptResult>
-    | undefined {
+  executeFromCLI({ exit = true } = {}): never | ScriptResult | Array<ScriptResult> | undefined {
     const [executor, ignoredBin, script, ...args] = process.argv;
-    const command = `"${path.basename(ignoredBin)} ${`${script} ${args.join(
-      " "
-    )}`.trim()}"`;
+    const command = `"${path.basename(ignoredBin)} ${`${script} ${args.join(" ")}`.trim()}"`;
     let shouldExit = exit;
 
     if (!script || !this.hasScript(script)) {
@@ -295,14 +256,7 @@ export default class Project {
    *   ["other-serial-command", ["arg"]],
    * );
    */
-  execute(
-    ...executables: Array<
-      | Executable
-      | { [key: string]: Executable | null | undefined }
-      | null
-      | undefined
-    >
-  ): ScriptResult {
+  execute(...executables: Array<Executable | { [key: string]: Executable | null | undefined } | null | undefined>): ScriptResult {
     if (executables.length === 0) return { status: 0 };
 
     if (executables.length > 1) {
@@ -332,9 +286,7 @@ export default class Project {
     }
 
     if (this.debug) {
-      logger.debug(
-        new Error().stack!.replace(/^Error/, `Stack trace for ${exe}`)
-      );
+      logger.debug(new Error().stack!.replace(/^Error/, `Stack trace for ${exe}`));
     }
 
     return spawn.sync(exe, args, options);

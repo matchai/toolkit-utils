@@ -25,6 +25,7 @@
   ],
   "author": "Matan Kushner <matan.kushner@auth0.com>",
   "devDependencies": {
+    "@types/arrify": "^1.0.4",
     "@types/cross-spawn": "^6.0.0",
     "@types/execa": "^0.9.0",
     "@types/fs-extra": "^5.0.4",
@@ -36,6 +37,7 @@
     "@zeit/ncc": "^0.14.0"
   },
   "dependencies": {
+    "arrify": "^1.0.1",
     "cross-spawn": "^6.0.5",
     "fs-extra": "^7.0.1",
     "globby": "^9.0.0",

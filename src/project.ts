@@ -3,6 +3,7 @@ import fs from "fs-extra";
 import globby from "globby";
 import logger from "signale";
 import spawn from "cross-spawn";
+import arrify from "arrify";
 import { pickBy } from "lodash";
 import ScriptKit from "./script-kit";
 import { getToolkitRoot, getProjectPackage, printHelp } from "./helpers/project-util";
@@ -209,24 +210,47 @@ export default class Project {
 
   /**
    * Executes a script based on the script name that was passed in `process.argv`.
-   * @param exit - TODO: Get back to this
    */
-  executeFromCLI({ exit = true } = {}): never | ScriptResult | Array<ScriptResult> | undefined {
+  executeFromCLI(): never | ScriptResult | Array<ScriptResult> | undefined {
     const [executor, ignoredBin, script, ...args] = process.argv;
     const command = `"${path.basename(ignoredBin)} ${`${script} ${args.join(" ")}`.trim()}"`;
-    let shouldExit = exit;
 
     if (!script || !this.hasScript(script)) {
       script ? logger.error(`Script could not be found: ${script}`) : "";
       printHelp(this.availableScripts);
-      return shouldExit ? process.exit(1) : undefined;
     }
 
     try {
       let success = true;
+      let emitGeneralError = false;
       const results = this.executeScriptFile(script, args);
-      // TODO: Continue from here
-    } catch (e) {}
+      const consoleErrorMessages: Error[] = [];
+
+      arrify(results).forEach((result: ScriptResult) => {
+        success = result.status === 0 && success;
+        // Log as necessary
+        if (result.error instanceof Error) {
+          logger.error(result.error.message); // JS Error in result
+          consoleErrorMessages.push(result.error);
+        } else if (result.error) {
+          logger.error(result.error); // Standard error in result
+        } else if (result.status !== 0) {
+          emitGeneralError = true;
+        }
+      });
+
+      if (emitGeneralError) {
+        logger.error(`${script} finished with error in command: ${command}`); // Fail without error message
+      }
+
+      // Throw full Error objects
+      consoleErrorMessages.forEach(console.error);
+      return process.exit(success ? 0 : 1);
+    } catch (e) {
+      const error = new Error(`${e}\nCannot finish execution of ${command}`);
+      logger.error(error.message);
+      throw error;
+    }
   }
 
   /**

@@ -1,5 +1,5 @@
 import path from "path";
-import logger from 'signale';
+import logger from "signale";
 import readPkgUp from "read-pkg-up";
 
 /**
@@ -18,11 +18,18 @@ export function getToolkitRoot(): string {
  * @returns Consuming project's package.json path and data.
  * @private
  */
-export function getProjectPackage(toolkitRoot: string, toolkitPkg: { [key: string]: any }): { root: string; pkg: { [key: string]: any } } {
+export function getProjectPackage(
+  toolkitRoot: string,
+  toolkitPkg: { [key: string]: any }
+): { root: string; pkg: { [key: string]: any } } {
   // Search for the package.json outside of the toolkit
-  const { pkg, path: pkgPath } = readPkgUp.sync({ cwd: path.join(toolkitRoot, "..") });
+  const { pkg, path: pkgPath } = readPkgUp.sync({
+    cwd: path.join(toolkitRoot, "..")
+  });
   if (!pkgPath) {
-    const { pkg: currentPkg, path: currentPath } = readPkgUp.sync({ cwd: path.join(toolkitRoot) });
+    const { pkg: currentPkg, path: currentPath } = readPkgUp.sync({
+      cwd: path.join(toolkitRoot)
+    });
 
     if (!currentPkg.name || currentPkg.name !== toolkitPkg.name) {
       logger.error(new Error("Cannot find project root"));
@@ -30,7 +37,10 @@ export function getProjectPackage(toolkitRoot: string, toolkitPkg: { [key: strin
     }
   }
 
-  return {root: pkgPath ? path.dirname(pkgPath) : toolkitRoot, pkg: pkg || toolkitPkg}
+  return {
+    root: pkgPath ? path.dirname(pkgPath) : toolkitRoot,
+    pkg: pkg || toolkitPkg
+  };
 }
 
 /**
@@ -41,7 +51,9 @@ export function printHelp(scriptNames: Array<string>) {
   const [executor, ignoredBin, script, ...args] = process.argv;
 
   const scriptList = scriptNames.join("\n  ");
-  let message = `Usage: ${path.basename(ignoredBin)} [script] [--flags/options]\n\n`;
+  let message = `Usage: ${path.basename(
+    ignoredBin
+  )} [script] [--flags/options]\n\n`;
   message += `Available scripts:\n ${scriptList}\n\n`;
   message += `Options:\n`;
   message += `  All flags and options that are passed to auth0-toolkit will be forwarded to the tool that is running under the hood.`;

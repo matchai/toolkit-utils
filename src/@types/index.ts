@@ -1,6 +1,6 @@
-import Project from '../project';
-import ScriptKit from '../script-kit';
-import { SpawnSyncOptions } from 'child_process';
+import Project from "../project";
+import ScriptKit from "../script-kit";
+import { SpawnSyncOptions } from "child_process";
 
 /**
  * Type for a script function.
@@ -9,16 +9,19 @@ import { SpawnSyncOptions } from 'child_process';
  * @param args - The list of arguments to be passed to the underlying command.
  * @param scriptKit - A {@link ScriptKit} instance, which has utility methods for the currently executing script file.
  */
-export type Script = (args: Array<string>, scriptKit: ScriptKit) => ScriptResult | Array<ScriptResult>;
+export type Script = (
+  args: Array<string>,
+  scriptKit: ScriptKit
+) => ScriptResult | Array<ScriptResult>;
 
 /**
  * Type for the returned value of a CLI command.
  */
 export type ScriptResult = {
-  status: number; 
-  error?: Error; 
-  previousResults?: Array<ScriptResult>; 
-  exit?: boolean 
+  status: number;
+  error?: Error;
+  previousResults?: Array<ScriptResult>;
+  exit?: boolean;
 };
 
 /**
@@ -29,4 +32,7 @@ export type ScriptResult = {
  * const binWithArgs = ["tsc", ["--strict", "--target", "ESNext"]];
  * const binWithOptions = ["tsc", ["--strict", "--target", "ESNext"], { encoding: "utf-8" }];
  */
-export type Executable = string | [string, Array<string>] | [string, Array<string>, SpawnSyncOptions];
+export type Executable =
+  | string
+  | [string, Array<string>]
+  | [string, Array<string>, SpawnSyncOptions];

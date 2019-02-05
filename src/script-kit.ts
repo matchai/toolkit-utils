@@ -1,8 +1,8 @@
-import fs from 'fs';
-import path from 'path';
-import logger from 'signale';
-import project from './index';
-import { ScriptResult } from './@types';
+import fs from "fs";
+import path from "path";
+import logger from "signale";
+import project from "./index";
+import { ScriptResult } from "./@types";
 
 export default class ScriptKit {
   private scriptFile: string;
@@ -10,10 +10,14 @@ export default class ScriptKit {
   constructor(scriptFile: string) {
     const file = project.hasScript(scriptFile);
     if (!file) {
-      logger.error(`Script "${scriptFile}" cannot be found in "${project.scriptsDir}"`);
+      logger.error(
+        `Script "${scriptFile}" cannot be found in "${project.scriptsDir}"`
+      );
       process.exit(1);
     }
-    this.scriptFile = fs.statSync(file).isDirectory() ? require.resolve(file) : file;
+    this.scriptFile = fs.statSync(file).isDirectory()
+      ? require.resolve(file)
+      : file;
   }
 
   /**
@@ -30,7 +34,7 @@ export default class ScriptKit {
    */
   get configDir(): string {
     const dirs = path.dirname(this.scriptFile).split(path.sep);
-    while(dirs.length > 0 && dirs.pop() !== "scripts") {}
+    while (dirs.length > 0 && dirs.pop() !== "scripts") {}
     dirs.push("config");
     return dirs.join(path.sep);
   }
@@ -64,7 +68,10 @@ export default class ScriptKit {
    * const absPath = here("a.txt"); // /some/path/mydir/a.txt
    */
   hereRelative(...part: string[]): string {
-    return `${path.sep}${path.relative(process.cwd(), path.join(this.dir, ...part))}`
+    return `${path.sep}${path.relative(
+      process.cwd(),
+      path.join(this.dir, ...part)
+    )}`;
   }
 
   /**
@@ -79,8 +86,14 @@ export default class ScriptKit {
    * // In build/index.js:
    * scriptKit.executeSubScript("tsc", args); // Executes build/tsc.js
    */
-  executeSubScript(name: string, args: Array<string>): ScriptResult | Array<ScriptResult> {
-    const scriptFile = path.join(path.relative(project.scriptsDir, this.dir), name);
+  executeSubScript(
+    name: string,
+    args: Array<string>
+  ): ScriptResult | Array<ScriptResult> {
+    const scriptFile = path.join(
+      path.relative(project.scriptsDir, this.dir),
+      name
+    );
     return project.executeScriptFile(scriptFile, args);
-  }  
+  }
 }

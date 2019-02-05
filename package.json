@@ -11,7 +11,6 @@
   },
   "scripts": {
     "build": "ncc build src/index.ts",
-    "lint": "ts-node src lint",
     "format": "ts-node src format"
   },
   "husky": {

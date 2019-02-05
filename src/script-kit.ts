@@ -8,7 +8,7 @@ export default class ScriptKit {
   private scriptFile: string;
 
   constructor(scriptFile: string) {
-    const file = project.hasScript(this.scriptFile);
+    const file = project.hasScript(scriptFile);
     if (!file) {
       logger.error(`Script "${scriptFile}" cannot be found in "${project.scriptsDir}"`);
       process.exit(1);

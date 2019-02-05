@@ -196,6 +196,7 @@ export default class Project {
    * @param args - A list of arguments to be passed to the script function.
    */
   executeScriptFile(scriptFile: string, args: Array<string> = []): ScriptResult | Array<ScriptResult> {
+    debugger;
     const file = this.fromScriptsDir(scriptFile);
     const { script: scriptFunction } = require(file);
     if (typeof scriptFunction !== "function") {
@@ -203,7 +204,7 @@ export default class Project {
       process.exit(1);
     }
 
-    return scriptFunction(this, args, new ScriptKit(scriptFile));
+    return scriptFunction(args, new ScriptKit(scriptFile));
   }
 
   /**

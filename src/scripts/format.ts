@@ -26,7 +26,7 @@ export const script: Script = function script(args: Array<string>, s: ScriptKit)
   const config = useBuiltinConfig ? ["--config", project.fromConfigDir(`prettierrc.js`)] : [];
 
   const useBuiltinIgnore = !args.includes("--ignore-path") && !project.hasFile(".prettierignore");
-  const ignore = useBuiltinIgnore ? ["--ignore-path", project.fromConfigDir("prettierignore")]: [];
+  const ignore = useBuiltinIgnore ? ["--ignore-path", project.fromConfigDir(".prettierignore")]: [];
 
   const write = args.includes("--no-write") ? [] : ["--write"];
 

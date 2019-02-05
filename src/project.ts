@@ -4,7 +4,7 @@ import globby from "globby";
 import logger from "signale";
 import spawn from "cross-spawn";
 import arrify from "arrify";
-import { pickBy } from "lodash";
+import _ from "lodash";
 import ScriptKit from "./script-kit";
 import { getToolkitRoot, getProjectPackage, printHelp } from "./helpers/project-util";
 import { ScriptResult, Executable } from "./@types";
@@ -75,6 +75,14 @@ export default class Project {
   }
 
   /**
+   * Determine whether a project is a TypeScript project.
+   * @readonly
+   */
+  get isTypeScript(): boolean {
+    return this.package.hasOwnProperty("types");
+  }
+
+  /**
    * List of scripts available in this toolkit.
    * @readonly
    */
@@ -122,6 +130,22 @@ export default class Project {
    */
   fromScriptsDir(...part: string[]) {
     return path.join(this.scriptsDir, ...part);
+  }
+
+  /**
+   * Returns one of the given values based on whether project has any of the given dependencies in `dependencies`, `devDependencies`, `peerDependencies`.
+   * @param deps - Dependency or dependencies to check.
+   * @returns Boolean value based on the existence of dependency in package.json.
+   */
+  hasAnyDep(deps: string[] | string): boolean {
+    if (typeof deps === "string") deps = [deps];
+    return deps.some(dep => {
+      return (
+        _.has(this.package, ["dependencies", dep]) ||
+        _.has(this.package, ["devDependencies", dep]) ||
+        _.has(this.package, ["peerDependencies", dep])
+      );
+    });
   }
 
   /**
@@ -176,7 +200,7 @@ export default class Project {
   getConcurrentlyArgs(scripts: { [key: string]: Executable | null | undefined }, { killOthers = true } = {}): Array<string> {
     const colors = ["bgBlue", "bgGreen", "bgMagenta", "bgCyan", "bgWhite", "bgRed", "bgBlack", "bgYellow"];
 
-    const fullScripts = pickBy(scripts) as { [key: string]: Executable }; // Clear empty keys
+    const fullScripts = _.pickBy(scripts) as { [key: string]: Executable }; // Clear empty keys
     const prefixColors = Object.keys(fullScripts)
       .reduce((pColors, _s, i) => pColors.concat([`${colors[i % colors.length]}.bold.reset}`]), [] as Array<string>)
       .join(",");

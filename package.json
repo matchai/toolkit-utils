@@ -6,11 +6,13 @@
     "node": ">= 10",
     "npm": ">= 6"
   },
+  "main": "lib/index",
+  "types": "lib/index",
   "bin": {
-    "auth0-scripts": "dist/index.js"
+    "auth0-toolkit": "dist/index.js"
   },
   "scripts": {
-    "build": "ncc build src/index.ts",
+    "build": "ts-node src build",
     "format": "ts-node src format"
   },
   "husky": {
@@ -33,11 +35,11 @@
     "@types/lodash": "^4.14.120",
     "@types/node": "^10.12.21",
     "@types/read-pkg-up": "^3.0.1",
-    "@types/signale": "^1.2.0",
-    "@zeit/ncc": "^0.14.0"
+    "@types/signale": "^1.2.0"
   },
   "dependencies": {
     "arrify": "^1.0.1",
+    "chokidar": "^2.1.0",
     "cross-spawn": "^6.0.5",
     "fs-extra": "^7.0.1",
     "globby": "^9.0.0",

@@ -57,7 +57,7 @@ export default class ScriptKit {
   }
 
   /**
-   * Returns the absolute of a file or dir given a path relative to the script path.
+   * Returns the absolute dir of a file or dir given a path relative to the script path.
    * Can be provided in multiple parts.
    * @param part - Path relative to the base path
    * @example

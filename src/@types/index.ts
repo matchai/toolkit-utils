@@ -4,7 +4,6 @@ import { SpawnSyncOptions } from "child_process";
 
 /**
  * Type for a script function.
- * @typedef {Function} Script
  * @param project - The project instance.
  * @param args - The list of arguments to be passed to the underlying command.
  * @param scriptKit - A {@link ScriptKit} instance, which has utility methods for the currently executing script file.

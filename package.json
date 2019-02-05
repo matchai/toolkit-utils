@@ -1,0 +1,41 @@
+{
+  "name": "auth0-toolkit",
+  "version": "0.0.1",
+  "description": "A toolkit for common scripts used at Auth0",
+  "engines": {
+    "node": ">= 10",
+    "npm": ">= 6"
+  },
+  "bin": {
+    "auth0-scripts": "dist/index.js"
+  },
+  "scripts": {
+    "build": "ncc build src/index.ts",
+    "lint": "ts-node src lint",
+    "format": "ts-node src format"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "node src pre-commit"
+    }
+  },
+  "files": [
+    "dist",
+    "eslint.js",
+    "prettier.js"
+  ],
+  "author": "Matan Kushner <matan.kushner@auth0.com>",
+  "devDependencies": {
+    "@types/fs-extra": "^5.0.4",
+    "@types/node": "^10.12.21",
+    "@types/read-pkg-up": "^3.0.1",
+    "@zeit/ncc": "^0.14.0"
+  },
+  "dependencies": {
+    "fs-extra": "^7.0.1",
+    "node-fs-extra": "^0.8.2",
+    "read-pkg-up": "^4.0.0",
+    "ts-node": "^8.0.2",
+    "typescript": "^3.3.1"
+  }
+}

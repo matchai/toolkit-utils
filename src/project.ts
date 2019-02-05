@@ -2,11 +2,13 @@ import path from 'path';
 import fs from 'fs-extra';
 import globby from 'globby';
 import logger from 'signale';
+import ScriptKit from './script-kit';
 import { getToolkitRoot, getProjectPackage, printHelp } from './helpers/project-util';
+import { ScriptResult } from './@types';
 
 export default class Project {
-  projectName: String;
-  projectRoot: String;
+  projectName: string;
+  projectRoot: string;
   projectPkg: { [key: string]: any };
 
   constructor({
@@ -48,6 +50,14 @@ export default class Project {
    */
   get scriptsDir(): string {
     return path.join(this.srcDir, "scripts");
+  }
+
+  /**
+   * The full project package.json object
+   * @readonly
+   */
+  get package(): { [key: string]: any } {
+    return this.projectPkg;
   }
 
   /**
@@ -105,6 +115,15 @@ export default class Project {
   }
 
   /**
+   * Checks for a file with a matching filename in the project root.
+   * @param fileName - The filename including the extension to look for in the project root.
+   */
+  hasFile(fileName: string): boolean {
+    const filePath = path.join(this.projectRoot, fileName);
+    return fs.existsSync(filePath) ? true : false;
+  }
+
+  /**
    * Executes a given script file's exported `script` function. The given script file should be in the "scripts" directory.
    * @param scriptFile - The script file to execute from the "scripts" directory.
    * @param args - A list of arguments to be passed to the script function.
@@ -114,9 +133,10 @@ export default class Project {
     const { script: scriptFunction } = require(file);
     if (typeof scriptFunction !== "function") {
       logger.error(new Error(`${scriptFile} does not export a \"script\" function.`));
+      process.exit(1);
     }
 
-    return scriptFunction(this, args, new ScriptKit(this, scriptFile));
+    return scriptFunction(this, args, new ScriptKit(scriptFile));
   }
 
   /**
@@ -138,6 +158,8 @@ export default class Project {
       let success = true;
       const results = this.executeScriptFile(script, args);
       // TODO: Continue from here
+    } catch (e) {
+
     }
   }
 }

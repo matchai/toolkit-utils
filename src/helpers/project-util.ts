@@ -26,6 +26,7 @@ export function getProjectPackage(toolkitRoot: string, toolkitPkg: { [key: strin
 
     if (!currentPkg.name || currentPkg.name !== toolkitPkg.name) {
       logger.error(new Error("Cannot find project root"));
+      process.exit(1);
     }
   }
 

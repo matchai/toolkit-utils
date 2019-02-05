@@ -22,4 +22,17 @@ export const script: Script = function script(args: Array<string>, s: ScriptKit)
     !project.hasFile(".prettierrc") &&
     !project.hasFile("prettier.config.js") &&
     !project.package.hasOwnProperty("prettierrc");
+
+  const config = useBuiltinConfig ? ["--config", project.fromConfigDir(`prettierrc.js`)] : [];
+
+  const useBuiltinIgnore = !args.includes("--ignore-path") && !project.hasFile(".prettierignore");
+  const ignore = useBuiltinIgnore ? ["--ignore-path", project.fromConfigDir("prettierignore")]: [];
+
+  const write = args.includes("--no-write") ? [] : ["--write"];
+
+  // Convert absolute paths provided by the pre-commit hook into relative paths.
+  // This ensures that the paths are treated as globs, so prettierignore will be applied.
+  const relativeArgs = args.map(a => a.replace(`${process.cwd()}/`, ""));
+  const filesToApply = parsedArgs._.length ? [] : ["**/*.+(js|jsx|json|less|css|ts|tsx|md)"];
+  return project.execute(["prettier", [...config, ...ignore, ...write, ...filesToApply].concat(relativeArgs)]);
 }

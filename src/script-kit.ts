@@ -10,8 +10,7 @@ export default class ScriptKit {
   constructor(scriptFile: string) {
     const file = project.hasScript(scriptFile);
     if (!file) {
-      logger.error(`Script "${scriptFile}" cannot be found in "${project.scriptsDir}"`);
-      process.exit(1);
+      throw new Error(`Script "${scriptFile}" cannot be found in "${project.scriptsDir}"`)
     }
     this.scriptFile = fs.statSync(file).isDirectory() ? require.resolve(file) : file;
   }
@@ -64,7 +63,7 @@ export default class ScriptKit {
    * const absPath = here("a.txt"); // /some/path/mydir/a.txt
    */
   hereRelative(...part: string[]): string {
-    return `${path.sep}${path.relative(process.cwd(), path.join(this.dir, ...part))}`;
+    return `.${path.sep}${path.relative(process.cwd(), path.join(this.dir, ...part))}`;
   }
 
   /**

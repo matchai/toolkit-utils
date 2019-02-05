@@ -11,9 +11,9 @@ import { ScriptResult, Executable } from "./@types";
 import { SpawnSyncOptions } from "child_process";
 
 export default class Project {
-  projectName: string;
-  projectRoot: string;
-  projectPkg: { [key: string]: any };
+  private projectName: string
+  private projectRoot: string
+  private projectPkg: { [key: string]: any } = {};
   debug: boolean;
 
   constructor({
@@ -25,20 +25,20 @@ export default class Project {
     cwd?: string;
     debug?: boolean;
   } = {}) {
+    this.debug = debug;
+
     try {
       const toolkitPackage = fs.readJSONSync(path.join(toolkitRoot, "package.json"));
       const { pkg: projectPkg, root: projectRoot } = getProjectPackage(toolkitRoot, toolkitPackage);
       this.projectName = projectPkg.name;
       this.projectRoot = projectRoot;
       this.projectPkg = projectPkg;
-      this.debug = debug;
 
       if (debug) {
         logger.warn("Debug mode is on");
       }
     } catch (e) {
-      console.error(e, "Cannot initialize project.");
-      process.exit(1);
+      throw new Error(e + "\nCannot initialize project.")
     }
   }
 
@@ -299,12 +299,12 @@ export default class Project {
    *   {
    *     my-parallel-job: ["build-doc-command", ["arg"],
    *     my-parallel-task: "some-other-command"
-   *     builder: ["tsc", ["arg"],
+   *     builder: ["tsc", ["arg"]],
    *   },
    *   ["other-serial-command", ["arg"]],
    * );
    */
-  execute(...executables: Array<Executable | { [key: string]: Executable | null | undefined } | null | undefined>): ScriptResult {
+  execute(...executables: Array<Executable | { [key: string]: Executable | undefined } | undefined>): ScriptResult {
     if (executables.length === 0) return { status: 0 };
 
     if (executables.length > 1) {

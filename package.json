@@ -35,11 +35,13 @@
     "@types/lodash": "^4.14.120",
     "@types/node": "^10.12.21",
     "@types/read-pkg-up": "^3.0.1",
-    "@types/signale": "^1.2.0"
+    "@types/signale": "^1.2.0",
+    "@types/yargs-parser": "^11.0.2"
   },
   "dependencies": {
     "arrify": "^1.0.1",
-    "chokidar": "^2.1.0",
+    "chokidar-cli": "^1.2.1",
+    "concurrently": "^4.1.0",
     "cross-spawn": "^6.0.5",
     "fs-extra": "^7.0.1",
     "globby": "^9.0.0",

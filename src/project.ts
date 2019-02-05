@@ -1,8 +1,8 @@
 import path from 'path';
 import fs from 'fs-extra';
 import globby from 'globby';
-import logger from 'consola';
-import { getToolkitRoot, getProjectPackage } from './helpers/project-util';
+import logger from 'signale';
+import { getToolkitRoot, getProjectPackage, printHelp } from './helpers/project-util';
 
 export default class Project {
   projectName: String;
@@ -104,12 +104,40 @@ export default class Project {
     return null;
   }
 
-  executeFromCLI(): never |  undefined | void {
+  /**
+   * Executes a given script file's exported `script` function. The given script file should be in the "scripts" directory.
+   * @param scriptFile - The script file to execute from the "scripts" directory.
+   * @param args - A list of arguments to be passed to the script function.
+   */
+  executeScriptFile(scriptFile: string, args: Array<string> = []): ScriptResult | Array<ScriptResult> {
+    const file = this.fromScriptsDir(scriptFile);
+    const { script: scriptFunction } = require(file);
+    if (typeof scriptFunction !== "function") {
+      logger.error(new Error(`${scriptFile} does not export a \"script\" function.`));
+    }
+
+    return scriptFunction(this, args, new ScriptKit(this, scriptFile));
+  }
+
+  /**
+   * Executes a script based on the script name that was passed in `process.argv`.
+   * @param exit - TODO: Get back to this
+   */
+  executeFromCLI({ exit = true} = {}): never | ScriptResult | Array<ScriptResult> | undefined {
     const [executor, ignoredBin, script, ...args] = process.argv;
     const command = `"${path.basename(ignoredBin)} ${`${script} ${args.join(" ")}`.trim()}"`;
+    let shouldExit = exit;
     
     if (!script || !this.hasScript(script)) {
       script ? logger.error(`Script could not be found: ${script}`) : "";
+      printHelp(this.availableScripts);
+      return shouldExit ? process.exit(1) : undefined;
+    }
+
+    try {
+      let success = true;
+      const results = this.executeScriptFile(script, args);
+      // TODO: Continue from here
     }
   }
 }

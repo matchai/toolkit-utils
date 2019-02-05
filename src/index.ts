@@ -1,13 +1,15 @@
-import Project from './helpers/project';
+import Project from './project';
+const debug = Boolean(process.env.DEBUG);
+
+const project = new Project({ debug });
+export default project;
 
 // If called from the CLI
 if (require.main === module) {
   try {
-    // project.executeFromCLIScript();
+    project.executeFromCLI();
   } catch (e) {
     console.error(e);
     process.exit(1);
   }
 }
-
-export default new Project();

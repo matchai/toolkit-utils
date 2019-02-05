@@ -3,7 +3,7 @@ import readPkgUp from "read-pkg-up";
 
 /**
  * Returns this toolkit's package.json path and data.
- * @returns {{ path: string, pkg: Object }} - Toolkit's package.json path and data.
+ * @returns Toolkit's package.json path and data.
  * @private
  */
 export function getToolkitRoot(): string {
@@ -12,9 +12,9 @@ export function getToolkitRoot(): string {
 
 /**
  * Returns the root path and package.json data of the project. If the project and this module are the same, return this module's path and data.
- * @param {string} toolkitRoot              - Toolkit's root path.
- * @param {Object} toolkitPkg               - Toolkit's package.json data.
- * @returns {{ path: string, pkg: Object }} - Consuming project's package.json path and data.
+ * @param toolkitRoot - Toolkit's root path.
+ * @param toolkitPkg - Toolkit's package.json data.
+ * @returns Consuming project's package.json path and data.
  * @private
  */
 export function getProjectPackage(toolkitRoot: string, toolkitPkg: { [key: string]: any }): { root: string; pkg: { [key: string]: any } } {

@@ -33,6 +33,7 @@
     "@zeit/ncc": "^0.14.0"
   },
   "dependencies": {
+    "consola": "^2.3.2",
     "fs-extra": "^7.0.1",
     "globby": "^9.0.0",
     "node-fs-extra": "^0.8.2",

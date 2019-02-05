@@ -8,7 +8,7 @@ export const script: Script = function script(rawArgs: Array<any>, s: ScriptKit)
   // tsc uses --outDir instead of --out-dir
   const args = replaceArgumentName(rawArgs, "--out-dir", "--outDir");
   const useSpecifiedOutDir = args.includes("--outDir");
-  const outDir = useSpecifiedOutDir ? [] : ["--outDir", "dist"];
+  const outDir = useSpecifiedOutDir ? [] : ["--outDir", "lib"];
   const willWatch = args.includes("--watch");
   const willClean = !args.includes("--no-clean");
 

@@ -9,7 +9,7 @@
   "main": "lib/index",
   "types": "lib/index",
   "bin": {
-    "auth0-toolkit": "dist/index.js"
+    "auth0-toolkit": "lib/index.js"
   },
   "scripts": {
     "build": "ts-node src build",
@@ -21,9 +21,7 @@
     }
   },
   "files": [
-    "dist",
-    "eslint.js",
-    "prettier.js"
+    "lib"
   ],
   "author": "Matan Kushner <matan.kushner@auth0.com>",
   "devDependencies": {

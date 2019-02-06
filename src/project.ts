@@ -90,16 +90,16 @@ export default class Project {
     // `globby` returns a list of unix style paths
     // We normalize it and script out paths and file extensions
     return globby
-      .sync(path.join(this.scriptsDir, "!(*.d.ts|*.map)"))
-      .map(path.normalize)
-      .map(script =>
-        script
-          .replace(this.scriptsDir, "")
-          .replace(/^[/\\]/, "")
-          .replace(/\.(js|ts)$/, "")
-      )
-      .filter(Boolean)
-      .sort();
+      .sync(path.join(this.scriptsDir))
+      // .map(path.normalize)
+      // .map(script =>
+      //   script
+      //     .replace(this.scriptsDir, "")
+      //     .replace(/^[/\\]/, "")
+      //     .replace(/\.(js|ts)$/, "")
+      // )
+      // .filter(Boolean)
+      // .sort();
   }
 
   /**
@@ -238,13 +238,14 @@ export default class Project {
   /**
    * Executes a script based on the script name that was passed in `process.argv`.
    */
-  executeFromCLI(): never {
+  executeFromCLI(): void | never {
     const [executor, ignoredBin, script, ...args] = process.argv;
     const command = `"${path.basename(ignoredBin)} ${`${script} ${args.join(" ")}`.trim()}"`;
 
     if (!script || !this.hasScript(script)) {
       script ? logger.error(`Script could not be found: ${script}`) : "";
       printHelp(this.availableScripts);
+      process.exit(1);
     }
 
     try {
@@ -276,7 +277,7 @@ export default class Project {
     } catch (e) {
       const error = new Error(`${e}\nCannot finish execution of ${command}`);
       logger.error(error.message);
-      throw error;
+      process.exit(1);
     }
   }
 

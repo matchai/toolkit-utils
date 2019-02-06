@@ -175,11 +175,14 @@ export default class Project {
 
   /**
    * Checks for a file with a matching filename in the project root.
-   * @param fileName - The filename including the extension to look for in the project root.
+   * @param fileNames - The filename(s) including the extension to look for in the project root.
    */
-  hasFile(fileName: string): boolean {
-    const filePath = path.join(this.projectRoot, fileName);
-    return fs.existsSync(filePath) ? true : false;
+  hasAnyFile(fileNames: string[] | string): boolean {
+    if (typeof fileNames === "string") fileNames = [fileNames];
+    return fileNames.some(fileName => {
+      const filePath = path.join(this.projectRoot, fileName);
+      return fs.existsSync(filePath) ? true : false;
+    });
   }
 
   /**

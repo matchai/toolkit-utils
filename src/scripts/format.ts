@@ -17,15 +17,21 @@ import project from "../";
  */
 export const script: Script = function script(args: Array<string>, s: ScriptKit) {
   const parsedArgs = yargsParser(args);
+  const prettierConfigFiles = [
+    ".prettierrc",
+    ".prettierrc.yaml",
+    ".prettierrc.yml",
+    ".prettierrc.json",
+    ".prettierrc.js",
+    ".prettierrc.toml",
+    "prettier.config.js"
+  ];
   const useBuiltinConfig =
-    !args.includes("--config") &&
-    !project.hasFile(".prettierrc") &&
-    !project.hasFile("prettier.config.js") &&
-    !project.package.hasOwnProperty("prettierrc");
+    !args.includes("--config") && !project.hasAnyFile(prettierConfigFiles) && !project.package.hasOwnProperty("prettier");
 
   const config = useBuiltinConfig ? ["--config", project.fromConfigDir(`prettierrc.js`)] : [];
 
-  const useBuiltinIgnore = !args.includes("--ignore-path") && !project.hasFile(".prettierignore");
+  const useBuiltinIgnore = !args.includes("--ignore-path") && !project.hasAnyFile(".prettierignore");
   const ignore = useBuiltinIgnore ? ["--ignore-path", project.fromConfigDir(".prettierignore")] : [];
 
   const write = args.includes("--no-write") ? [] : ["--write"];

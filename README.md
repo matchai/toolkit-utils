@@ -8,18 +8,18 @@ Inspired by ["Tools without config"](https://blog.kentcdodds.com/automation-with
 ## Usage
 
 1. Create a project:
-    * `npm init new-auth0-project`
-    * If it's a TypeScript project: add `types` into `package.json`. For example:
-        * `{ "types": "lib/index" }`
+   - `npm init new-auth0-project`
+   - If it's a TypeScript project: add `types` into `package.json`. For example:
+     - `{ "types": "lib/index" }`
 1. Install auth-toolkit:
-    * `npm install --save-dev auth0-toolkit`
+   - `npm install --save-dev auth0-toolkit`
 1. Use included scripts:
-    * `npm run build -- --watch`
-    * `npm run build:doc`
-    * `npm run validate`
-    * `npm run commit`
-    * `npm run release`
-    * ... etc.
+   - `npm run build -- --watch`
+   - `npm run build:doc`
+   - `npm run validate`
+   - `npm run commit`
+   - `npm run release`
+   - ... etc.
 
 # Configuration
 

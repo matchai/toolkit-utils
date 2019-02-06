@@ -17,7 +17,6 @@ export default class ScriptKit {
 
   /**
    * The directory of the script.
-   * @readonly
    */
   get dir(): string {
     return path.dirname(this.scriptFile);
@@ -36,7 +35,6 @@ export default class ScriptKit {
 
   /**
    * File extension of the script without the "."
-   * @readonly
    * @example
    * const ext = s.extension(); // js
    */

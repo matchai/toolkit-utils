@@ -29,7 +29,7 @@ export const script: Script = function script(args: Array<string>, s: ScriptKit)
   const useBuiltinConfig =
     !args.includes("--config") && !project.hasAnyFile(prettierConfigFiles) && !project.package.hasOwnProperty("prettier");
 
-  const config = useBuiltinConfig ? ["--config", project.fromConfigDir(`prettierrc.js`)] : [];
+  const config = useBuiltinConfig ? ["--config", project.fromConfigDir(`.prettierrc.js`)] : [];
 
   const useBuiltinIgnore = !args.includes("--ignore-path") && !project.hasAnyFile(".prettierignore");
   const ignore = useBuiltinIgnore ? ["--ignore-path", project.fromConfigDir(".prettierignore")] : [];

@@ -43,39 +43,41 @@ export default class Project {
 
   /**
    * Path of the src dir.
-   * @readonly
    */
   get srcDir(): string {
     return path.dirname(require!.main!.filename);
   }
 
   /**
-   * Path of the scripts dir
-   * @readonly
+   * Path of the scripts dir.
    */
   get scriptsDir(): string {
     return path.join(this.srcDir, "scripts");
   }
 
   /**
-   * Path of the config dir
-   * @readonly
+   * Path of the config dir.
    */
   get configDir(): string {
     return path.join(this.srcDir, "config");
   }
 
   /**
-   * The full project package.json object
-   * @readonly
+   * The full project package.json object.
    */
   get package(): { [key: string]: any } {
     return this.projectPkg;
   }
 
   /**
+   * Determine whether a project is compiled via Typescript or Babel.
+   */
+  get isCompiled(): boolean {
+    return this.isTypeScript || this.hasAnyDep(["babel-cli", "babel-preset-env"]);
+  }
+
+  /**
    * Determine whether a project is a TypeScript project.
-   * @readonly
    */
   get isTypeScript(): boolean {
     return this.package.hasOwnProperty("types");
@@ -83,7 +85,6 @@ export default class Project {
 
   /**
    * List of scripts available in this toolkit.
-   * @readonly
    */
   get availableScripts(): Array<string> {
     return fs
@@ -214,7 +215,6 @@ export default class Project {
    * @param args - A list of arguments to be passed to the script function.
    */
   executeScriptFile(scriptFile: string, args: Array<string> = []): ScriptResult | Array<ScriptResult> {
-    debugger;
     const file = this.fromScriptsDir(scriptFile);
     const { script: scriptFunction } = require(file);
     if (typeof scriptFunction !== "function") {

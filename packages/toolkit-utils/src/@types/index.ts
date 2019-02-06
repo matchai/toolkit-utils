@@ -8,7 +8,7 @@ import { SpawnSyncOptions } from "child_process";
  * @param args - The list of arguments to be passed to the underlying command.
  * @param scriptKit - A {@link ScriptKit} instance, which has utility methods for the currently executing script file.
  */
-export type Script = (args: Array<string>, scriptKit: ScriptKit) => ScriptResult | Array<ScriptResult>;
+export type Script = (project: Project, args: Array<string>, scriptKit: ScriptKit) => ScriptResult | Array<ScriptResult>;
 
 /**
  * Type for the returned value of a CLI command.

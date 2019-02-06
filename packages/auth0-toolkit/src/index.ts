@@ -1,4 +1,4 @@
-import Project from "./project";
+import { Project } from "toolkit-utils";
 const debug = Boolean(process.env.DEBUG);
 
 const project = new Project({ debug });

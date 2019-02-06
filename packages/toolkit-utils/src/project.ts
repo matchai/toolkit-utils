@@ -5,7 +5,7 @@ import spawn from "cross-spawn";
 import arrify from "arrify";
 import _ from "lodash";
 import ScriptKit from "./script-kit";
-import { getToolkitRoot, getProjectPackage, printHelp } from "./helpers/project-util";
+import { getToolkitRoot, getProjectPackage, printHelp } from "./project-util";
 import { ScriptResult, Executable } from "./@types";
 import { SpawnSyncOptions } from "child_process";
 
@@ -17,21 +17,19 @@ export default class Project {
 
   constructor({
     toolkitRoot = getToolkitRoot(),
-    cwd,
     debug = false
   }: {
     toolkitRoot?: string;
     cwd?: string;
     debug?: boolean;
   } = {}) {
-    this.debug = debug;
-
     try {
       const toolkitPackage = fs.readJSONSync(path.join(toolkitRoot, "package.json"));
       const { pkg: projectPkg, root: projectRoot } = getProjectPackage(toolkitRoot, toolkitPackage);
       this.projectName = projectPkg.name;
       this.projectRoot = projectRoot;
       this.projectPkg = projectPkg;
+      this.debug = debug;
 
       if (debug) {
         logger.warn("Debug mode is on");
@@ -222,7 +220,7 @@ export default class Project {
       process.exit(1);
     }
 
-    return scriptFunction(args, new ScriptKit(scriptFile));
+    return scriptFunction(args, new ScriptKit(this,scriptFile));
   }
 
   /**

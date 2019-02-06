@@ -1,17 +1,19 @@
 import fs from "fs";
 import path from "path";
 import logger from "signale";
-import project from "./index";
+import Project from "./project";
 import { ScriptResult } from "./@types";
 
 export default class ScriptKit {
   private scriptFile: string;
+  private project: Project;
 
-  constructor(scriptFile: string) {
+  constructor(project: Project, scriptFile: string) {
     const file = project.hasScript(scriptFile);
     if (!file) {
       throw new Error(`Script "${scriptFile}" cannot be found in "${project.scriptsDir}"`);
     }
+    this.project = project;
     this.scriptFile = fs.statSync(file).isDirectory() ? require.resolve(file) : file;
   }
 
@@ -77,7 +79,7 @@ export default class ScriptKit {
    * scriptKit.executeSubScript("tsc", args); // Executes build/tsc.js
    */
   executeSubScript(name: string, args: Array<string>): ScriptResult | Array<ScriptResult> {
-    const scriptFile = path.join(path.relative(project.scriptsDir, this.dir), name);
-    return project.executeScriptFile(scriptFile, args);
+    const scriptFile = path.join(path.relative(this.project.scriptsDir, this.dir), name);
+    return this.project.executeScriptFile(scriptFile, args);
   }
 }

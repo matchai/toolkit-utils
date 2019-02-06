@@ -1,12 +1,10 @@
+import { Project, ScriptKit, Script } from 'toolkit-utils';
 import isCI from "is-ci";
-import ScriptKit from "../script-kit";
-import { Script } from "../@types";
-import project from "../";
 
 process.env.BABEL_ENV = "test";
 process.env.NODE_ENV = "test";
 
-export const script: Script = function script(args: Array<string>, s: ScriptKit) {
+export const script: Script = function script(project: Project, args: Array<string>, s: ScriptKit) {
   const watch =
     !isCI &&
     !args.includes("--no-watch") &&

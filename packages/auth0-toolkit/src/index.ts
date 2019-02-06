@@ -1,7 +1,6 @@
 import { Project } from "toolkit-utils";
-const debug = Boolean(process.env.DEBUG);
 
-const project = new Project({ debug });
+const project: Project = require("./project");
 export default project;
 
 // If called from the CLI

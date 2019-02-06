@@ -10,9 +10,9 @@
   "main": "lib/index",
   "types": "lib/index",
   "scripts": {
-    "build": "ts-node src build",
-    "format": "ts-node src format",
-    "test": "ts-node src test"
+    "build": "auth0-toolkit build",
+    "format": "auth0-toolkit format",
+    "test": "auth0-toolkit test"
   },
   "files": [
     "lib"

@@ -1,10 +1,7 @@
-import ScriptKit from "../../script-kit";
-import { Script, Executable } from "../../@types";
-import { replaceArgumentName } from "../../helpers/script-util";
-import project from "../..";
+import { Project, ScriptKit, Script, Executable, replaceArgumentName } from 'toolkit-utils';
 import fs from "fs-extra";
 
-export const script: Script = function script(rawArgs: Array<any>, s: ScriptKit) {
+export const script: Script = function script(project: Project, rawArgs: Array<any>, s: ScriptKit) {
   // tsc uses --outDir instead of --out-dir
   const args = replaceArgumentName(rawArgs, "--out-dir", "--outDir");
   const useSpecifiedOutDir = args.includes("--outDir");

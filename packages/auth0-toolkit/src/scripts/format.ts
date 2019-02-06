@@ -1,6 +1,5 @@
+import { Project, ScriptKit, Script } from 'toolkit-utils';
 import yargsParser from "yargs-parser";
-import ScriptKit from "../script-kit";
-import { Script } from "../@types";
 import project from "../";
 
 /**
@@ -15,7 +14,7 @@ import project from "../";
  * $ npm run format
  * $ npx auth0-scripts format
  */
-export const script: Script = function script(args: Array<string>, s: ScriptKit) {
+export const script: Script = function script(project: Project, args: Array<string>, s: ScriptKit) {
   const parsedArgs = yargsParser(args);
   const prettierConfigFiles = [
     ".prettierrc",

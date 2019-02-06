@@ -49,7 +49,7 @@ export function printHelp(scriptNames: Array<string>) {
 
   const scriptList = scriptNames.join("\n  ");
   let message = `Usage: ${path.basename(ignoredBin)} [script] [--flags/options]\n\n`;
-  message += `Available scripts:\n ${scriptList}\n\n`;
+  message += `Available scripts:\n  ${scriptList}\n\n`;
   message += `Options:\n`;
   message += `  All flags and options that are passed to auth0-toolkit will be forwarded to the tool that is running under the hood.`;
   console.log(`\n${message.trim()}\n`);

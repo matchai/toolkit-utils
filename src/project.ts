@@ -1,6 +1,5 @@
 import path from "path";
 import fs from "fs-extra";
-import globby from "globby";
 import logger from "signale";
 import spawn from "cross-spawn";
 import arrify from "arrify";
@@ -87,19 +86,10 @@ export default class Project {
    * @readonly
    */
   get availableScripts(): Array<string> {
-    // `globby` returns a list of unix style paths
-    // We normalize it and script out paths and file extensions
-    return globby
-      .sync(path.join(this.scriptsDir))
-      // .map(path.normalize)
-      // .map(script =>
-      //   script
-      //     .replace(this.scriptsDir, "")
-      //     .replace(/^[/\\]/, "")
-      //     .replace(/\.(js|ts)$/, "")
-      // )
-      // .filter(Boolean)
-      // .sort();
+    return fs
+      .readdirSync(this.scriptsDir)
+      .map(script => script.replace(/\.(js|ts)$/, ""))
+      .sort();
   }
 
   /**

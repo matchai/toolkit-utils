@@ -3,20 +3,21 @@
   "version": "0.0.1",
   "description": "A set of utilities for creating toolkits",
   "author": "Matan Kushner <matan.kushner@auth0.com>",
+  "license": "UNLICENSED",
   "engines": {
     "node": ">= 10",
     "npm": ">= 6"
   },
   "main": "lib/index",
   "types": "lib/index",
+  "files": [
+    "lib"
+  ],
   "scripts": {
     "build": "auth0-toolkit build",
     "format": "auth0-toolkit format",
     "test": "auth0-toolkit test"
   },
-  "files": [
-    "lib"
-  ],
   "dependencies": {
     "arrify": "^1.0.1",
     "cross-spawn": "^6.0.5",

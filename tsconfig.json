@@ -5,6 +5,7 @@
     "target": "esnext",
     "outDir": "lib",
     "sourceMap": true,
+    "mapRoot": ".",
     "declaration": true,
     "esModuleInterop": true
   },

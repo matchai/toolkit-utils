@@ -1,6 +1,5 @@
 import fs from "fs";
 import path from "path";
-import logger from "signale";
 import Project from "./project";
 import { ScriptResult } from "./@types";
 

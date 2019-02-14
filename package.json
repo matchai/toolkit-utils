@@ -15,7 +15,7 @@
   ],
   "scripts": {
     "build": "auth0-toolkit build",
-    "build:fresh": "npx @zeit/ncc build src/index.ts -o lib",
+    "build:fresh": "npx tsc --build",
     "format": "auth0-toolkit format",
     "test": "auth0-toolkit test"
   },

@@ -220,7 +220,7 @@ export default class Project {
       process.exit(1);
     }
 
-    return scriptFunction(args, new ScriptKit(this,scriptFile));
+    return scriptFunction(this, args, new ScriptKit(this,scriptFile));
   }
 
   /**

@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "A set of utilities for creating toolkits",
   "author": "Matan Kushner <matan.kushner@auth0.com>",
-  "license": "UNLICENSED",
+  "license": "MIT",
   "engines": {
     "node": ">= 10",
     "npm": ">= 6"
@@ -15,6 +15,7 @@
   ],
   "scripts": {
     "build": "auth0-toolkit build",
+    "build:fresh": "npx @zeit/ncc build src/index.ts -o lib",
     "format": "auth0-toolkit format",
     "test": "auth0-toolkit test"
   },

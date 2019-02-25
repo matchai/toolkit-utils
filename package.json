@@ -1,6 +1,6 @@
 {
   "name": "toolkit-utils",
-  "version": "0.0.1",
+  "version": "0.0.1-alpha.0",
   "description": "A set of utilities for creating toolkits",
   "author": "Matan Kushner <matan.kushner@auth0.com>",
   "license": "MIT",
@@ -15,7 +15,6 @@
   ],
   "scripts": {
     "build": "auth0-toolkit build",
-    "build:fresh": "npx tsc --build",
     "format": "auth0-toolkit format",
     "test": "auth0-toolkit test"
   },

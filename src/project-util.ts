@@ -44,7 +44,7 @@ export function getProjectPackage(toolkitRoot: string, toolkitPkg: { [key: strin
  * Prints the help message including the list of available scripts.
  * @param scriptNames - The list of available scripts.
  */
-export function printHelp(scriptNames: Array<string>) {
+export function printHelp(scriptNames: string[]) {
   const [executor, ignoredBin, script, ...args] = process.argv;
 
   const scriptList = scriptNames.join("\n  ");

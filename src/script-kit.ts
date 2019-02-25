@@ -77,7 +77,7 @@ export default class ScriptKit {
    * // In build/index.js:
    * scriptKit.executeSubScript("tsc", args); // Executes build/tsc.js
    */
-  executeSubScript(name: string, args: Array<string>): ScriptResult | Array<ScriptResult> {
+  executeSubScript(name: string, args: string[]): ScriptResult | ScriptResult[] {
     const scriptFile = path.join(path.relative(this.project.scriptsDir, this.dir), name);
     return this.project.executeScriptFile(scriptFile, args);
   }

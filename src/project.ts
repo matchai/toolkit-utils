@@ -1,6 +1,6 @@
 import path from "path";
 import fs from "fs-extra";
-import logger from "signale";
+import logger from "consola";
 import spawn from "cross-spawn";
 import arrify from "arrify";
 import _ from "lodash";
@@ -37,6 +37,13 @@ export default class Project {
     } catch (e) {
       throw new Error(e + "\nCannot initialize project.");
     }
+  }
+
+  /**
+   * A logger instance
+   */
+  get logger(): Consola {
+    return logger;
   }
 
   /**
@@ -84,7 +91,7 @@ export default class Project {
   /**
    * List of scripts available in this toolkit.
    */
-  get availableScripts(): Array<string> {
+  get availableScripts(): string[] {
     return fs
       .readdirSync(this.scriptsDir)
       .map(script => script.replace(/\.(js|ts)$/, ""))
@@ -97,7 +104,7 @@ export default class Project {
    * @param part - Path relative to the root dir.
    * @returns Path in root directory.
    */
-  fromRoot(...part: Array<string>): string {
+  fromRoot(...part: string[]): string {
     return path.join(this.projectRoot, ...part);
   }
 
@@ -189,12 +196,12 @@ export default class Project {
    * @param killOthers - Whether all scripts should be killed if one fails.
    * @returns - Arguments to use with concurrently
    */
-  getConcurrentlyArgs(scripts: { [key: string]: Executable | null | undefined }, { killOthers = true } = {}): Array<string> {
+  getConcurrentlyArgs(scripts: { [key: string]: Executable | null | undefined }, { killOthers = true } = {}): string[] {
     const colors = ["bgBlue", "bgGreen", "bgMagenta", "bgCyan", "bgWhite", "bgRed", "bgBlack", "bgYellow"];
 
     const fullScripts = _.pickBy(scripts) as { [key: string]: Executable }; // Clear empty keys
     const prefixColors = Object.keys(fullScripts)
-      .reduce((pColors, _s, i) => pColors.concat([`${colors[i % colors.length]}.bold.reset}`]), [] as Array<string>)
+      .reduce((pColors, _s, i) => pColors.concat([`${colors[i % colors.length]}.bold.reset}`]), [] as string[])
       .join(",");
 
     // prettier-ignore
@@ -212,7 +219,7 @@ export default class Project {
    * @param scriptFile - The script file to execute from the "scripts" directory.
    * @param args - A list of arguments to be passed to the script function.
    */
-  executeScriptFile(scriptFile: string, args: Array<string> = []): ScriptResult | Array<ScriptResult> {
+  executeScriptFile(scriptFile: string, args: string[] = []): ScriptResult | ScriptResult[] {
     const file = this.fromScriptsDir(scriptFile);
     const { script: scriptFunction } = require(file);
     if (typeof scriptFunction !== "function") {
@@ -225,15 +232,18 @@ export default class Project {
 
   /**
    * Executes a script based on the script name that was passed in `process.argv`.
+   * @param exit - Whether to exit from process.
+   * @returns Result of script
    */
-  executeFromCLI(): void | never {
+  executeFromCLI({ exit = true } = {}): void | ScriptResult | ScriptResult[] {
     const [executor, ignoredBin, script, ...args] = process.argv;
     const command = `"${path.basename(ignoredBin)} ${`${script} ${args.join(" ")}`.trim()}"`;
+    let shouldExit = exit;
 
     if (!script || !this.hasScript(script)) {
       script ? logger.error(`Script could not be found: ${script}`) : "";
       printHelp(this.availableScripts);
-      process.exit(1);
+      return shouldExit ? process.exit(1) : undefined;
     }
 
     try {
@@ -244,6 +254,7 @@ export default class Project {
 
       arrify(results).forEach((result: ScriptResult) => {
         success = result.status === 0 && success;
+        shouldExit = shouldExit && (result.exit === undefined ? true : result.exit);
         // Log as necessary
         if (result.error instanceof Error) {
           logger.error(result.error.message); // JS Error in result
@@ -261,7 +272,7 @@ export default class Project {
 
       // Throw full Error objects
       consoleErrorMessages.forEach(console.error);
-      return process.exit(success ? 0 : 1);
+      return shouldExit ? process.exit(success ? 0 : 1) : results;
     } catch (e) {
       const error = new Error(`${e}\nCannot finish execution of ${command}`);
       logger.error(error.message);

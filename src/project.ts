@@ -85,7 +85,15 @@ export default class Project {
    * Determine whether a project is a TypeScript project.
    */
   get isTypeScript(): boolean {
-    return this.package.hasOwnProperty("types");
+    return this.packageHas("types");
+  }
+
+  /**
+   * The command name of the module's bin.
+   */
+  get moduleBin(): string | undefined {
+    const bin = this.package.bin;
+    return typeof bin === "string" ? bin : Object.keys(bin || {})[0];
   }
 
   /**
@@ -137,11 +145,47 @@ export default class Project {
     if (typeof deps === "string") deps = [deps];
     return deps.some(dep => {
       return (
-        _.has(this.package, ["dependencies", dep]) ||
-        _.has(this.package, ["devDependencies", dep]) ||
-        _.has(this.package, ["peerDependencies", dep])
+        this.packageHas("dependencies", dep) ||
+        this.packageHas("devDependencies", dep) ||
+        this.packageHas("peerDependencies", dep)
       );
     });
+  }
+
+  /**
+   * Checks whether the given environment variable is set.
+   * @param name - Name of the environment variable to look for.
+   * @returns Whether the given environment variable is set.
+   */
+  envIsSet(name: string): boolean {
+    return process.env.hasOwnProperty(name) && process.env[name] !== "" && process.env[name] !== "undefined";
+  }
+
+  /**
+   * Returns environment variable if it is set. Returns the default value otherwise.
+   * @param name - Name of the environment variable to look for.
+   * @param defaultValue - Default value if the environment variable is not net.
+   * @returns Environment variable or default value
+   */
+  parseEnv<T>(name: string, defaultValue?: T): string | number | object | T | undefined {
+    if (this.envIsSet(name)) {
+      const result = process.env[name] as string;
+      try {
+        return JSON.parse(result);
+      } catch {
+        return result;
+      }
+    }
+    return defaultValue;
+  }
+
+  /**
+   * Checks if a given path is a direct property of the `package.json`
+   * @param path - The path to check
+   * @returns Whether the given path is in the package file
+   */
+  packageHas(...path: string[]): boolean {
+    return _.has(this.package, path);
   }
 
   /**

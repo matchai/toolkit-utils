@@ -1,6 +1,6 @@
 import path from "path";
 import fs from "fs-extra";
-import logger from "consola";
+import logger, {Signale} from "signale";
 import spawn from "cross-spawn";
 import arrify from "arrify";
 import _ from "lodash";
@@ -42,7 +42,7 @@ export default class Project {
   /**
    * A logger instance
    */
-  get logger(): Consola {
+  get logger(): Signale {
     return logger;
   }
 

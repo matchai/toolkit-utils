@@ -39,10 +39,24 @@ export default class Project {
   }
 
   /**
+   * The name of the toolkit.
+   */
+  get toolkitName(): string {
+    return this.toolkitPkg.name;
+  }
+
+  /**
    * Path of the root of the toolkit.
    */
   get toolkitRootDir(): string {
     return this.toolkitRoot;
+  }
+
+  /**
+   * The name of the project
+   */
+  get name(): string {
+    return this.projectPkg.name;
   }
 
   /**
@@ -86,10 +100,10 @@ export default class Project {
       .sort();
   }
   public debug: boolean;
-  private projectName: string;
   private projectRoot: string;
   private projectPkg: { [key: string]: any } = {};
   private toolkitRoot: string;
+  private toolkitPkg: { [key: string]: any } = {};
 
   constructor({
     toolkitRoot = getToolkitRoot(),
@@ -100,17 +114,17 @@ export default class Project {
     debug?: boolean;
   } = {}) {
     try {
-      const toolkitPackage = fs.readJSONSync(
+      const toolkitPkg = fs.readJSONSync(
         path.join(toolkitRoot, "package.json")
       );
       const { pkg: projectPkg, root: projectRoot } = getProjectPackage(
         toolkitRoot,
-        toolkitPackage
+        toolkitPkg
       );
-      this.projectName = projectPkg.name;
       this.projectRoot = projectRoot;
       this.projectPkg = projectPkg;
       this.toolkitRoot = toolkitRoot;
+      this.toolkitPkg = toolkitPkg;
       this.debug = debug;
 
       if (debug) {

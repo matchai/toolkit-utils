@@ -227,11 +227,30 @@ export default class Project {
 
   /**
    * Checks if a given path is a direct property of the `package.json`
-   * @param path - The path to check
+   * @param jsonPath - The path to check
    * @returns Whether the given path is in the package file
    */
-  public packageHas(...path: string[]): boolean {
-    return _.has(this.package, path);
+  public packageHas(...jsonPath: string[]): boolean {
+    return _.has(this.package, jsonPath);
+  }
+
+  /**
+   * Provides the value at the given path within `package.json`
+   * @param jsonPath - The path to get a value from
+   * @returns The value at the given path in the package file
+   */
+  public packageGet(...jsonPath: string[]): any {
+    return _.get(this.package, jsonPath);
+  }
+
+  /**
+   * Sets the value at the given path within `package.json`
+   * @param jsonPath - The path to get a value from
+   * @param value - The value to set at the path
+   */
+  public packageSet(jsonPath: string, value: any): void {
+    _.set(this.projectPkg, jsonPath, value);
+    this.writeFile(this.projectRoot, this.package);
   }
 
   /**
@@ -269,6 +288,27 @@ export default class Project {
       const filePath = path.join(this.projectRoot, fileName);
       return fs.existsSync(filePath) ? true : false;
     });
+  }
+
+  /**
+   * Creates and writes the given data to a file in the project.
+   * @param fileName - The name of the file to be written
+   * @param data - The data to be written to the file. Objects that are provided will be serialized.
+   */
+  public writeFile(fileName: string, data: string | { [key: string]: any }) {
+    if (data === null || data === undefined) {
+      throw new Error("Cannot write file. File data cannot be null or undefined.");
+    }
+    
+    const filePath = this.fromRoot(fileName);
+    try {
+      const content = typeof data === "object" ? JSON.stringify(data, undefined, 2) : data;
+      fs.outputFileSync(filePath, content);
+
+      this.logger.info(`File written: ${filePath}`);
+    } catch (error) {
+      throw new Error(`Cannot create file: ${filePath}\n${error}`)
+    }
   }
 
   /**

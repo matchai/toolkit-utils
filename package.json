@@ -21,7 +21,7 @@
     "format": "auth0-toolkit format",
     "test": "auth0-toolkit test",
     "lint": "auth0-toolkit lint",
-    "watch": "concurrently 'yarn build --watch' 'yarn test --watch'",
+    "watch": "concurrently 'yarn build --watch' 'yarn test --watch",
     "test:update": "auth0-toolkit test --update",
     "validate": "auth0-toolkit validate",
     "prepublishOnly": "npm run build"
@@ -45,5 +45,7 @@
     "@types/node": "^10.12.21",
     "@types/read-pkg-up": "^3.0.1",
     "@types/signale": "^1.2.0"
-  }
+  },
+  "readme": "ERROR: No README data found!",
+  "_id": "toolkit-utils@0.0.1-alpha.7"
 }

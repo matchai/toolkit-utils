@@ -1,1 +1,3 @@
-./node_modules/auth0-toolkit/tslint.json
+{
+  "extends": "auth0-toolkit/tslint.json"
+}

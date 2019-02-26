@@ -4,7 +4,8 @@
     "module": "commonJS",
     "target": "esnext",
     "outDir": "lib",
-    "sourceMap": true,
+    "inlineSources": true,
+    "inlineSourceMap": true,
     "declaration": true,
     "esModuleInterop": true
   },

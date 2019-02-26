@@ -1,6 +1,6 @@
+import { SpawnSyncOptions } from "child_process";
 import Project from "../project";
 import ScriptKit from "../script-kit";
-import { SpawnSyncOptions } from "child_process";
 
 /**
  * Type for a script function.
@@ -17,12 +17,12 @@ export type Script = (
 /**
  * Type for the returned value of a CLI command.
  */
-export type ScriptResult = {
+export interface ScriptResult {
   status: number;
   error?: Error;
   previousResults?: ScriptResult[];
   exit?: boolean;
-};
+}
 
 /**
  * Type for holding executables. It may be a string to store an executable name without arguments. For executables

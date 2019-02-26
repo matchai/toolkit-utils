@@ -1,6 +1,6 @@
 import path from "path";
-import logger from "signale";
 import readPkgUp from "read-pkg-up";
+import logger from "signale";
 
 /**
  * Returns this toolkit's package.json path and data.

@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
-import Project from "./project";
 import { ScriptResult } from "./@types";
+import Project from "./project";
 
 export default class ScriptKit {
   private scriptFile: string;
@@ -54,7 +54,7 @@ export default class ScriptKit {
    * @example
    * const absPath = here("a.txt"); // /some/path/mydir/a.txt
    */
-  here(...part: string[]): string {
+  public here(...part: string[]): string {
     return path.join(this.dir, ...part);
   }
 
@@ -65,7 +65,7 @@ export default class ScriptKit {
    * @example
    * const absPath = here("a.txt"); // /some/path/mydir/a.txt
    */
-  hereRelative(...part: string[]): string {
+  public hereRelative(...part: string[]): string {
     return `.${path.sep}${path.relative(
       process.cwd(),
       path.join(this.dir, ...part)
@@ -84,7 +84,7 @@ export default class ScriptKit {
    * // In build/index.js:
    * scriptKit.executeSubScript("tsc", args); // Executes build/tsc.js
    */
-  executeSubScript(
+  public executeSubScript(
     name: string,
     args: string[]
   ): ScriptResult | ScriptResult[] {

@@ -1,51 +1,15 @@
-import path from "path";
-import fs from "fs-extra";
-import logger, { Signale } from "signale";
-import spawn from "cross-spawn";
 import arrify from "arrify";
-import _ from "lodash";
-import ScriptKit from "./script-kit";
-import { getToolkitRoot, getProjectPackage, printHelp } from "./project-util";
-import { ScriptResult, Executable } from "./@types";
 import { SpawnSyncOptions } from "child_process";
+import spawn from "cross-spawn";
+import fs from "fs-extra";
+import _ from "lodash";
+import path from "path";
+import logger, { Signale } from "signale";
+import { Executable, ScriptResult } from "./@types";
+import { getProjectPackage, getToolkitRoot, printHelp } from "./project-util";
+import ScriptKit from "./script-kit";
 
 export default class Project {
-  private projectName: string;
-  private projectRoot: string;
-  private projectPkg: { [key: string]: any } = {};
-  private toolkitRoot: string;
-  debug: boolean;
-
-  constructor({
-    toolkitRoot = getToolkitRoot(),
-    debug = false
-  }: {
-    toolkitRoot?: string;
-    cwd?: string;
-    debug?: boolean;
-  } = {}) {
-    try {
-      const toolkitPackage = fs.readJSONSync(
-        path.join(toolkitRoot, "package.json")
-      );
-      const { pkg: projectPkg, root: projectRoot } = getProjectPackage(
-        toolkitRoot,
-        toolkitPackage
-      );
-      this.projectName = projectPkg.name;
-      this.projectRoot = projectRoot;
-      this.projectPkg = projectPkg;
-      this.toolkitRoot = toolkitRoot;
-      this.debug = debug;
-
-      if (debug) {
-        logger.warn("Debug mode is on");
-      }
-    } catch (e) {
-      throw new Error(e + "\nCannot initialize project.");
-    }
-  }
-
   /**
    * A logger instance
    */
@@ -121,6 +85,41 @@ export default class Project {
       .map(script => script.replace(/\.(js|ts)$/, ""))
       .sort();
   }
+  public debug: boolean;
+  private projectName: string;
+  private projectRoot: string;
+  private projectPkg: { [key: string]: any } = {};
+  private toolkitRoot: string;
+
+  constructor({
+    toolkitRoot = getToolkitRoot(),
+    debug = false
+  }: {
+    toolkitRoot?: string;
+    cwd?: string;
+    debug?: boolean;
+  } = {}) {
+    try {
+      const toolkitPackage = fs.readJSONSync(
+        path.join(toolkitRoot, "package.json")
+      );
+      const { pkg: projectPkg, root: projectRoot } = getProjectPackage(
+        toolkitRoot,
+        toolkitPackage
+      );
+      this.projectName = projectPkg.name;
+      this.projectRoot = projectRoot;
+      this.projectPkg = projectPkg;
+      this.toolkitRoot = toolkitRoot;
+      this.debug = debug;
+
+      if (debug) {
+        logger.warn("Debug mode is on");
+      }
+    } catch (e) {
+      throw new Error(e + "\nCannot initialize project.");
+    }
+  }
 
   /**
    * Returns the given path added to the path of the project root.
@@ -128,7 +127,7 @@ export default class Project {
    * @param part - Path relative to the root dir.
    * @returns Path in root directory.
    */
-  fromRoot(...part: string[]): string {
+  public fromRoot(...part: string[]): string {
     return path.join(this.projectRoot, ...part);
   }
 
@@ -138,7 +137,7 @@ export default class Project {
    * @param part - Path relative to the root dir of the toolkit.
    * @returns Path in toolkit root directory.
    */
-  fromToolkitRoot(...part: string[]): string {
+  public fromToolkitRoot(...part: string[]): string {
     return path.join(this.toolkitRootDir, ...part);
   }
 
@@ -148,7 +147,7 @@ export default class Project {
    * @param part - Path relative to the config dir.
    * @returns Path in config directory.
    */
-  fromConfigDir(...part: string[]) {
+  public fromConfigDir(...part: string[]) {
     return path.join(this.configDir, ...part);
   }
 
@@ -158,7 +157,7 @@ export default class Project {
    * @param part - Path relative to the scripts dir.
    * @returns Path in scripts dir.
    */
-  fromScriptsDir(...part: string[]) {
+  public fromScriptsDir(...part: string[]) {
     return path.join(this.scriptsDir, ...part);
   }
 
@@ -167,7 +166,7 @@ export default class Project {
    * @param deps - Dependency or dependencies to check.
    * @returns Boolean value based on the existence of dependency in package.json.
    */
-  hasAnyDep(deps: string[] | string): boolean {
+  public hasAnyDep(deps: string[] | string): boolean {
     if (typeof deps === "string") deps = [deps];
     return deps.some(dep => {
       return (
@@ -183,7 +182,7 @@ export default class Project {
    * @param name - Name of the environment variable to look for.
    * @returns Whether the given environment variable is set.
    */
-  envIsSet(name: string): boolean {
+  public envIsSet(name: string): boolean {
     return (
       process.env.hasOwnProperty(name) &&
       process.env[name] !== "" &&
@@ -197,7 +196,7 @@ export default class Project {
    * @param defaultValue - Default value if the environment variable is not net.
    * @returns Environment variable or default value
    */
-  parseEnv<T>(
+  public parseEnv<T>(
     name: string,
     defaultValue?: T
   ): string | number | object | T | undefined {
@@ -217,7 +216,7 @@ export default class Project {
    * @param path - The path to check
    * @returns Whether the given path is in the package file
    */
-  packageHas(...path: string[]): boolean {
+  public packageHas(...path: string[]): boolean {
     return _.has(this.package, path);
   }
 
@@ -229,7 +228,7 @@ export default class Project {
    * @param scriptFile - Script file to check for the existance of.
    * @returns Full path of the script. Null if none is found.
    */
-  hasScript(scriptFile: string): string | null {
+  public hasScript(scriptFile: string): string | null {
     const scriptPath = this.fromScriptsDir(scriptFile);
 
     if (fs.existsSync(scriptPath)) {
@@ -250,7 +249,7 @@ export default class Project {
    * Checks for a file with a matching filename in the project root.
    * @param fileNames - The filename(s) including the extension to look for in the project root.
    */
-  hasAnyFile(fileNames: string[] | string): boolean {
+  public hasAnyFile(fileNames: string[] | string): boolean {
     if (typeof fileNames === "string") fileNames = [fileNames];
     return fileNames.some(fileName => {
       const filePath = path.join(this.projectRoot, fileName);
@@ -262,7 +261,7 @@ export default class Project {
    * Returns the relative path to an executable located in `node_modules/.bin`.
    * @param executable - The name of the executable.
    */
-  bin(executable: string): string {
+  public bin(executable: string): string {
     const relative = path.relative(
       process.cwd(),
       this.fromRoot(`node_modules/.bin/${executable}`)
@@ -276,7 +275,7 @@ export default class Project {
    * @param killOthers - Whether all scripts should be killed if one fails.
    * @returns - Arguments to use with concurrently
    */
-  getConcurrentlyArgs(
+  public getConcurrentlyArgs(
     scripts: { [key: string]: Executable | null | undefined },
     { killOthers = true } = {}
   ): string[] {
@@ -315,7 +314,7 @@ export default class Project {
    * @param scriptFile - The script file to execute from the "scripts" directory.
    * @param args - A list of arguments to be passed to the script function.
    */
-  executeScriptFile(
+  public executeScriptFile(
     scriptFile: string,
     args: string[] = []
   ): ScriptResult | ScriptResult[] {
@@ -336,7 +335,10 @@ export default class Project {
    * @param exit - Whether to exit from process.
    * @returns Result of script
    */
-  executeFromCLI({ exit = true } = {}): void | ScriptResult | ScriptResult[] {
+  public executeFromCLI({ exit = true } = {}):
+    | void
+    | ScriptResult
+    | ScriptResult[] {
     const [executor, ignoredBin, script, ...args] = process.argv;
     const command = `"${path.basename(ignoredBin)} ${`${script} ${args.join(
       " "
@@ -411,7 +413,7 @@ export default class Project {
    *   ["other-serial-command", ["arg"]],
    * );
    */
-  execute(
+  public execute(
     ...executables: Array<
       Executable | { [key: string]: Executable | undefined } | undefined
     >

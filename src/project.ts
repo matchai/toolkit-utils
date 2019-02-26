@@ -83,11 +83,11 @@ export default class Project {
   }
 
   /**
-   * The command name of the module's bin.
+   * The command name of the toolkit's bin.
    */
-  get moduleBin(): string | undefined {
-    const bin = this.package.bin;
-    return typeof bin === "string" ? bin : Object.keys(bin || {})[0];
+  get toolkitBin(): string | undefined {
+    const bin = this.toolkitPkg.bin;
+    return typeof bin === "string" ? this.toolkitName : Object.keys(bin || {})[0];
   }
 
   /**
@@ -250,7 +250,7 @@ export default class Project {
    */
   public packageSet(jsonPath: string, value: any): void {
     _.set(this.projectPkg, jsonPath, value);
-    this.writeFile(this.fromRoot('package.json'), this.package);
+    this.writeFile('package.json', this.package);
   }
 
   /**

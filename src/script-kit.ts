@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import { ScriptResult } from "./@types";
+import { IScriptResult } from "./@types";
 import Project from "./project";
 
 export default class ScriptKit {
@@ -87,7 +87,7 @@ export default class ScriptKit {
   public executeSubScript(
     name: string,
     args: string[]
-  ): ScriptResult | ScriptResult[] {
+  ): IScriptResult | IScriptResult[] {
     const scriptFile = path.join(
       path.relative(this.project.scriptsDir, this.dir),
       name

@@ -5,7 +5,7 @@ import fs from "fs-extra";
 import _ from "lodash";
 import path from "path";
 import logger, { Signale } from "signale";
-import { Executable, ScriptResult } from "./@types";
+import { Executable, IScriptResult } from "./@types";
 import { getProjectPackage, getToolkitRoot, printHelp } from "./project-util";
 import ScriptKit from "./script-kit";
 
@@ -131,7 +131,7 @@ export default class Project {
         logger.warn("Debug mode is on");
       }
     } catch (e) {
-      throw new Error(e + "\nCannot initialize project.");
+      throw new Error(`${e}\nCannot initialize project.`);
     }
   }
 
@@ -307,7 +307,7 @@ export default class Project {
     const fullScripts = _.pickBy(scripts) as { [key: string]: Executable }; // Clear empty keys
     const prefixColors = Object.keys(fullScripts)
       .reduce(
-        (pColors, _s, i) =>
+        (pColors, s, i) =>
           pColors.concat([`${colors[i % colors.length]}.bold.reset}`]),
         [] as string[]
       )
@@ -331,7 +331,7 @@ export default class Project {
   public executeScriptFile(
     scriptFile: string,
     args: string[] = []
-  ): ScriptResult | ScriptResult[] {
+  ): IScriptResult | IScriptResult[] {
     const file = this.fromScriptsDir(scriptFile);
     const { script: scriptFunction } = require(file);
     if (typeof scriptFunction !== "function") {
@@ -351,8 +351,8 @@ export default class Project {
    */
   public executeFromCLI({ exit = true } = {}):
     | void
-    | ScriptResult
-    | ScriptResult[] {
+    | IScriptResult
+    | IScriptResult[] {
     const [executor, ignoredBin, script, ...args] = process.argv;
     const command = `"${path.basename(ignoredBin)} ${`${script} ${args.join(
       " "
@@ -371,7 +371,7 @@ export default class Project {
       const results = this.executeScriptFile(script, args);
       const consoleErrorMessages: Error[] = [];
 
-      arrify(results).forEach((result: ScriptResult) => {
+      arrify(results).forEach((result: IScriptResult) => {
         success = result.status === 0 && success;
         shouldExit =
           shouldExit && (result.exit === undefined ? true : result.exit);
@@ -391,7 +391,7 @@ export default class Project {
       }
 
       // Throw full Error objects
-      consoleErrorMessages.forEach(console.error);
+      consoleErrorMessages.forEach(logger.error);
       return shouldExit ? process.exit(success ? 0 : 1) : results;
     } catch (e) {
       const error = new Error(`${e}\nCannot finish execution of ${command}`);
@@ -407,7 +407,7 @@ export default class Project {
    * If an object is provided with names as keys and {@link Executable Executables} as values, it executes them using `concurrently`
    * and returns result of `concurrently`.
    * @param   {...Executable} executables - Executable or executables.
-   * @returns {ScriptResult}              - Result of the executable.
+   * @returns {IScriptResult}              - Result of the executable.
    * @example
    * // Execute some commands serially and concurrently. Commands in the object are executed concurrently.
    * // 1. `serial-command-1` is executed first.
@@ -431,11 +431,11 @@ export default class Project {
     ...executables: Array<
       Executable | { [key: string]: Executable | undefined } | undefined
     >
-  ): ScriptResult {
+  ): IScriptResult {
     if (executables.length === 0) return { status: 0 };
 
     if (executables.length > 1) {
-      const results: ScriptResult[] = [];
+      const results: IScriptResult[] = [];
       for (const executable of executables.filter(Boolean)) {
         const result = this.execute(executable);
         if (result.status !== 0) {

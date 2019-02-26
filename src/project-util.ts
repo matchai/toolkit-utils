@@ -57,5 +57,5 @@ export function printHelp(scriptNames: string[]) {
   message += `Available scripts:\n  ${scriptList}\n\n`;
   message += `Options:\n`;
   message += `  All flags and options that are passed to auth0-toolkit will be forwarded to the tool that is running under the hood.`;
-  console.log(`\n${message.trim()}\n`);
+  console.log(`\n${message.trim()}\n`); // tslint:disable-line: no-console
 }

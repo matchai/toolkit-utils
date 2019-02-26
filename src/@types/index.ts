@@ -12,15 +12,15 @@ export type Script = (
   project: Project,
   args: string[],
   scriptKit: ScriptKit
-) => ScriptResult | ScriptResult[];
+) => IScriptResult | IScriptResult[];
 
 /**
  * Type for the returned value of a CLI command.
  */
-export interface ScriptResult {
+export interface IScriptResult {
   status: number;
   error?: Error;
-  previousResults?: ScriptResult[];
+  previousResults?: IScriptResult[];
   exit?: boolean;
 }
 

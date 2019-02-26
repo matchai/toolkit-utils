@@ -1,6 +1,6 @@
 import path from "path";
 import fs from "fs-extra";
-import logger, {Signale} from "signale";
+import logger, { Signale } from "signale";
 import spawn from "cross-spawn";
 import arrify from "arrify";
 import _ from "lodash";
@@ -13,6 +13,7 @@ export default class Project {
   private projectName: string;
   private projectRoot: string;
   private projectPkg: { [key: string]: any } = {};
+  private toolkitRoot: string;
   debug: boolean;
 
   constructor({
@@ -24,11 +25,17 @@ export default class Project {
     debug?: boolean;
   } = {}) {
     try {
-      const toolkitPackage = fs.readJSONSync(path.join(toolkitRoot, "package.json"));
-      const { pkg: projectPkg, root: projectRoot } = getProjectPackage(toolkitRoot, toolkitPackage);
+      const toolkitPackage = fs.readJSONSync(
+        path.join(toolkitRoot, "package.json")
+      );
+      const { pkg: projectPkg, root: projectRoot } = getProjectPackage(
+        toolkitRoot,
+        toolkitPackage
+      );
       this.projectName = projectPkg.name;
       this.projectRoot = projectRoot;
       this.projectPkg = projectPkg;
+      this.toolkitRoot = toolkitRoot;
       this.debug = debug;
 
       if (debug) {
@@ -68,6 +75,13 @@ export default class Project {
   }
 
   /**
+   * Path of the root of the toolkit.
+   */
+  get toolkitRootDir(): string {
+    return this.toolkitRoot;
+  }
+
+  /**
    * The full project package.json object.
    */
   get package(): { [key: string]: any } {
@@ -78,7 +92,9 @@ export default class Project {
    * Determine whether a project is compiled via Typescript or Babel.
    */
   get isCompiled(): boolean {
-    return this.isTypeScript || this.hasAnyDep(["babel-cli", "babel-preset-env"]);
+    return (
+      this.isTypeScript || this.hasAnyDep(["babel-cli", "babel-preset-env"])
+    );
   }
 
   /**
@@ -114,6 +130,16 @@ export default class Project {
    */
   fromRoot(...part: string[]): string {
     return path.join(this.projectRoot, ...part);
+  }
+
+  /**
+   * Returns the given path added to the path of the toolkit root.
+   * A path may be given as a single string or in multiple parts.
+   * @param part - Path relative to the root dir of the toolkit.
+   * @returns Path in toolkit root directory.
+   */
+  fromToolkitRoot(...part: string[]): string {
+    return path.join(this.toolkitRootDir, ...part);
   }
 
   /**
@@ -158,7 +184,11 @@ export default class Project {
    * @returns Whether the given environment variable is set.
    */
   envIsSet(name: string): boolean {
-    return process.env.hasOwnProperty(name) && process.env[name] !== "" && process.env[name] !== "undefined";
+    return (
+      process.env.hasOwnProperty(name) &&
+      process.env[name] !== "" &&
+      process.env[name] !== "undefined"
+    );
   }
 
   /**
@@ -167,7 +197,10 @@ export default class Project {
    * @param defaultValue - Default value if the environment variable is not net.
    * @returns Environment variable or default value
    */
-  parseEnv<T>(name: string, defaultValue?: T): string | number | object | T | undefined {
+  parseEnv<T>(
+    name: string,
+    defaultValue?: T
+  ): string | number | object | T | undefined {
     if (this.envIsSet(name)) {
       const result = process.env[name] as string;
       try {
@@ -230,7 +263,10 @@ export default class Project {
    * @param executable - The name of the executable.
    */
   bin(executable: string): string {
-    const relative = path.relative(process.cwd(), this.fromRoot(`node_modules/.bin/${executable}`));
+    const relative = path.relative(
+      process.cwd(),
+      this.fromRoot(`node_modules/.bin/${executable}`)
+    );
     return `.${path.sep}${relative}`;
   }
 
@@ -240,12 +276,28 @@ export default class Project {
    * @param killOthers - Whether all scripts should be killed if one fails.
    * @returns - Arguments to use with concurrently
    */
-  getConcurrentlyArgs(scripts: { [key: string]: Executable | null | undefined }, { killOthers = true } = {}): string[] {
-    const colors = ["bgBlue", "bgGreen", "bgMagenta", "bgCyan", "bgWhite", "bgRed", "bgBlack", "bgYellow"];
+  getConcurrentlyArgs(
+    scripts: { [key: string]: Executable | null | undefined },
+    { killOthers = true } = {}
+  ): string[] {
+    const colors = [
+      "bgBlue",
+      "bgGreen",
+      "bgMagenta",
+      "bgCyan",
+      "bgWhite",
+      "bgRed",
+      "bgBlack",
+      "bgYellow"
+    ];
 
     const fullScripts = _.pickBy(scripts) as { [key: string]: Executable }; // Clear empty keys
     const prefixColors = Object.keys(fullScripts)
-      .reduce((pColors, _s, i) => pColors.concat([`${colors[i % colors.length]}.bold.reset}`]), [] as string[])
+      .reduce(
+        (pColors, _s, i) =>
+          pColors.concat([`${colors[i % colors.length]}.bold.reset}`]),
+        [] as string[]
+      )
       .join(",");
 
     // prettier-ignore
@@ -263,15 +315,20 @@ export default class Project {
    * @param scriptFile - The script file to execute from the "scripts" directory.
    * @param args - A list of arguments to be passed to the script function.
    */
-  executeScriptFile(scriptFile: string, args: string[] = []): ScriptResult | ScriptResult[] {
+  executeScriptFile(
+    scriptFile: string,
+    args: string[] = []
+  ): ScriptResult | ScriptResult[] {
     const file = this.fromScriptsDir(scriptFile);
     const { script: scriptFunction } = require(file);
     if (typeof scriptFunction !== "function") {
-      logger.error(new Error(`${scriptFile} does not export a \"script\" function.`));
+      logger.error(
+        new Error(`${scriptFile} does not export a \"script\" function.`)
+      );
       process.exit(1);
     }
 
-    return scriptFunction(this, args, new ScriptKit(this,scriptFile));
+    return scriptFunction(this, args, new ScriptKit(this, scriptFile));
   }
 
   /**
@@ -281,7 +338,9 @@ export default class Project {
    */
   executeFromCLI({ exit = true } = {}): void | ScriptResult | ScriptResult[] {
     const [executor, ignoredBin, script, ...args] = process.argv;
-    const command = `"${path.basename(ignoredBin)} ${`${script} ${args.join(" ")}`.trim()}"`;
+    const command = `"${path.basename(ignoredBin)} ${`${script} ${args.join(
+      " "
+    )}`.trim()}"`;
     let shouldExit = exit;
 
     if (!script || !this.hasScript(script)) {
@@ -298,7 +357,8 @@ export default class Project {
 
       arrify(results).forEach((result: ScriptResult) => {
         success = result.status === 0 && success;
-        shouldExit = shouldExit && (result.exit === undefined ? true : result.exit);
+        shouldExit =
+          shouldExit && (result.exit === undefined ? true : result.exit);
         // Log as necessary
         if (result.error instanceof Error) {
           logger.error(result.error.message); // JS Error in result
@@ -351,7 +411,11 @@ export default class Project {
    *   ["other-serial-command", ["arg"]],
    * );
    */
-  execute(...executables: Array<Executable | { [key: string]: Executable | undefined } | undefined>): ScriptResult {
+  execute(
+    ...executables: Array<
+      Executable | { [key: string]: Executable | undefined } | undefined
+    >
+  ): ScriptResult {
     if (executables.length === 0) return { status: 0 };
 
     if (executables.length > 1) {
@@ -381,7 +445,9 @@ export default class Project {
     }
 
     if (this.debug) {
-      logger.debug(new Error().stack!.replace(/^Error/, `Stack trace for ${exe}`));
+      logger.debug(
+        new Error().stack!.replace(/^Error/, `Stack trace for ${exe}`)
+      );
     }
 
     return spawn.sync(exe, args, options);

@@ -10,10 +10,14 @@ export default class ScriptKit {
   constructor(project: Project, scriptFile: string) {
     const file = project.hasScript(scriptFile);
     if (!file) {
-      throw new Error(`Script "${scriptFile}" cannot be found in "${project.scriptsDir}"`);
+      throw new Error(
+        `Script "${scriptFile}" cannot be found in "${project.scriptsDir}"`
+      );
     }
     this.project = project;
-    this.scriptFile = fs.statSync(file).isDirectory() ? require.resolve(file) : file;
+    this.scriptFile = fs.statSync(file).isDirectory()
+      ? require.resolve(file)
+      : file;
   }
 
   /**
@@ -62,7 +66,10 @@ export default class ScriptKit {
    * const absPath = here("a.txt"); // /some/path/mydir/a.txt
    */
   hereRelative(...part: string[]): string {
-    return `.${path.sep}${path.relative(process.cwd(), path.join(this.dir, ...part))}`;
+    return `.${path.sep}${path.relative(
+      process.cwd(),
+      path.join(this.dir, ...part)
+    )}`;
   }
 
   /**
@@ -77,8 +84,14 @@ export default class ScriptKit {
    * // In build/index.js:
    * scriptKit.executeSubScript("tsc", args); // Executes build/tsc.js
    */
-  executeSubScript(name: string, args: string[]): ScriptResult | ScriptResult[] {
-    const scriptFile = path.join(path.relative(this.project.scriptsDir, this.dir), name);
+  executeSubScript(
+    name: string,
+    args: string[]
+  ): ScriptResult | ScriptResult[] {
+    const scriptFile = path.join(
+      path.relative(this.project.scriptsDir, this.dir),
+      name
+    );
     return this.project.executeScriptFile(scriptFile, args);
   }
 }

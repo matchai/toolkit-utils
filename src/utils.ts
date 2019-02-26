@@ -10,7 +10,11 @@ import arrify from "arrify";
  * const arguments = ["--a", "--b"];
  * replaceArgumentName(arguments, ["--a"], "--c"); // -> ["--c", "--b"]
  */
-export function replaceArgumentName(args: any[], names: string | string[], newName: string): any[] {
+export function replaceArgumentName(
+  args: any[],
+  names: string | string[],
+  newName: string
+): any[] {
   const newArgs = [...args];
   for (const name of arrify(names)) {
     const index = newArgs.indexOf(name);

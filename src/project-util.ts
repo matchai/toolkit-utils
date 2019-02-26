@@ -18,7 +18,10 @@ export function getToolkitRoot(): string {
  * @returns Consuming project's package.json path and data.
  * @private
  */
-export function getProjectPackage(toolkitRoot: string, toolkitPkg: { [key: string]: any }): { root: string; pkg: { [key: string]: any } } {
+export function getProjectPackage(
+  toolkitRoot: string,
+  toolkitPkg: { [key: string]: any }
+): { root: string; pkg: { [key: string]: any } } {
   // Search for the package.json outside of the toolkit
   const { pkg, path: pkgPath } = readPkgUp.sync({
     cwd: path.join(toolkitRoot, "..")
@@ -48,7 +51,9 @@ export function printHelp(scriptNames: string[]) {
   const [executor, ignoredBin, script, ...args] = process.argv;
 
   const scriptList = scriptNames.join("\n  ");
-  let message = `Usage: ${path.basename(ignoredBin)} [script] [--flags/options]\n\n`;
+  let message = `Usage: ${path.basename(
+    ignoredBin
+  )} [script] [--flags/options]\n\n`;
   message += `Available scripts:\n  ${scriptList}\n\n`;
   message += `Options:\n`;
   message += `  All flags and options that are passed to auth0-toolkit will be forwarded to the tool that is running under the hood.`;

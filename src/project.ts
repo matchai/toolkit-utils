@@ -87,7 +87,9 @@ export default class Project {
    */
   get toolkitBin(): string | undefined {
     const bin = this.toolkitPkg.bin;
-    return typeof bin === "string" ? this.toolkitName : Object.keys(bin || {})[0];
+    return typeof bin === "string"
+      ? this.toolkitName
+      : Object.keys(bin || {})[0];
   }
 
   /**
@@ -250,7 +252,7 @@ export default class Project {
    */
   public packageSet(jsonPath: string, value: any): void {
     _.set(this.projectPkg, jsonPath, value);
-    this.writeFile('package.json', this.package);
+    this.writeFile("package.json", this.package);
   }
 
   /**
@@ -297,17 +299,20 @@ export default class Project {
    */
   public writeFile(fileName: string, data: string | { [key: string]: any }) {
     if (data === null || data === undefined) {
-      throw new Error("Cannot write file. File data cannot be null or undefined.");
+      throw new Error(
+        "Cannot write file. File data cannot be null or undefined."
+      );
     }
-    
+
     const filePath = this.fromRoot(fileName);
     try {
-      const content = typeof data === "object" ? JSON.stringify(data, undefined, 2) : data;
+      const content =
+        typeof data === "object" ? JSON.stringify(data, undefined, 2) : data;
       fs.outputFileSync(filePath, content);
 
       this.logger.info(`File written: ${filePath}`);
     } catch (error) {
-      throw new Error(`Cannot create file: ${filePath}\n${error}`)
+      throw new Error(`Cannot create file: ${filePath}\n${error}`);
     }
   }
 

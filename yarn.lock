@@ -1024,10 +1024,10 @@ auth0-toolkit@^0.0.1-alpha.12:
     typescript "^3.3.1"
     yargs-parser "^13.0.0"
 
-auth0-toolkit@^0.0.1-alpha.17:
-  version "0.0.1-alpha.17"
-  resolved "https://a0us.jfrog.io/a0us/api/npm/auth0-common-npm/auth0-toolkit/-/auth0-toolkit-0.0.1-alpha.17.tgz#e6f4fecff0a86df570ea1ea358dba194e6df1fbb"
-  integrity sha1-5vT+z/CobfVw6h6jWNuhlObfH7s=
+auth0-toolkit@^0.0.1-alpha.20:
+  version "0.0.1-alpha.20"
+  resolved "https://a0us.jfrog.io/a0us/api/npm/auth0-common-npm/auth0-toolkit/-/auth0-toolkit-0.0.1-alpha.20.tgz#d8a120cc0d583c107d5301f9f177c47e805c77cb"
+  integrity sha1-2KEgzA1YPBB9UwH58XfEfoBcd8s=
   dependencies:
     "@babel/core" "^7.2.2"
     "@babel/preset-env" "^7.3.1"
@@ -1046,7 +1046,7 @@ auth0-toolkit@^0.0.1-alpha.17:
     node-fs-extra "^0.8.2"
     prettier "^1.16.4"
     read-pkg-up "^4.0.0"
-    toolkit-utils "^0.0.1-alpha.7"
+    toolkit-utils "^0.0.1-alpha.9"
     ts-jest "^23.10.5"
     ts-node "^8.0.2"
     tslint "^5.13.0"
@@ -5170,10 +5170,10 @@ toolkit-utils@^0.0.1-alpha.6:
     signale "^1.3.0"
     ts-node "^8.0.2"
 
-toolkit-utils@^0.0.1-alpha.7:
-  version "0.0.1-alpha.7"
-  resolved "https://a0us.jfrog.io/a0us/api/npm/auth0-common-npm/toolkit-utils/-/toolkit-utils-0.0.1-alpha.7.tgz#1b14d921a6627fc6b28b7817a6f45032058a2edf"
-  integrity sha1-GxTZIaZif8ayi3gXpvRQMgWKLt8=
+toolkit-utils@^0.0.1-alpha.9:
+  version "0.0.1-alpha.9"
+  resolved "https://a0us.jfrog.io/a0us/api/npm/auth0-common-npm/toolkit-utils/-/toolkit-utils-0.0.1-alpha.9.tgz#28ae0604fb788aa57244afe1117eac7cf2657818"
+  integrity sha1-KK4GBPt4iqVyRK/hEX6sfPJleBg=
   dependencies:
     arrify "^1.0.1"
     auth0-toolkit "^0.0.1-alpha.12"

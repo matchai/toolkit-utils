@@ -2,7 +2,10 @@
   "name": "toolkit-utils",
   "version": "0.0.1-alpha.7",
   "description": "A set of utilities for creating toolkits",
-  "author": "Matan Kushner <matan.kushner@auth0.com>",
+  "author": {
+    "name": "Matan Kushner",
+    "email": "matan.kushner@auth0.com"
+  },
   "license": "MIT",
   "engines": {
     "node": ">= 10",
@@ -17,11 +20,15 @@
     "build": "auth0-toolkit build",
     "format": "auth0-toolkit format",
     "test": "auth0-toolkit test",
-    "lint": "auth0-toolkit lint"
+    "lint": "auth0-toolkit lint",
+    "watch": "concurrently 'yarn build --watch' 'yarn test --watch'",
+    "test:update": "auth0-toolkit test --update",
+    "validate": "auth0-toolkit validate",
+    "prepublishOnly": "npm run build"
   },
   "dependencies": {
     "arrify": "^1.0.1",
-    "auth0-toolkit": "^0.0.1-alpha.17",
+    "auth0-toolkit": "^0.0.1-alpha.20",
     "cross-spawn": "^6.0.5",
     "fs-extra": "^7.0.1",
     "lodash": "^4.17.11",

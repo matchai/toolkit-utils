@@ -3,12 +3,40 @@ import readPkgUp from "read-pkg-up";
 import logger from "signale";
 
 /**
+ * Returns callsites from the V8 stack trace API
+ * @returns The top-most callsite
+ * @private
+ */
+function getStackTrace(): Array<any> {
+  const old = Error.prepareStackTrace;
+  Error.prepareStackTrace = (_, stack) => stack;
+  const stack = (new Error().stack as any) as Array<any>;
+  Error.prepareStackTrace = old;
+  /* istanbul ignore next */
+  if (!stack) {
+    throw new Error("No stack trace available. Probably this is top most module.");
+  }
+  return stack.slice(1);
+}
+
+/**
  * Returns this toolkit's package.json path and data.
  * @returns Toolkit's package.json path and data.
  * @private
  */
 export function getToolkitRoot(): string {
-  return path.dirname(readPkgUp.sync({ cwd: __dirname }).path);
+  const root = path.dirname(readPkgUp.sync({ cwd: __dirname }).path);
+  
+  // Find the toolkit by finding the file which creates the Project instance outside of toolkit-utils
+  const targetStack = getStackTrace().find(
+    e => e.getFileName() && !e.getFileName().startsWith("internal") && !path.dirname(e.getFileName()).startsWith(root),
+  );
+
+  if (!targetStack) {
+    throw new Error("Cannot get module root.");
+  } else {
+    return path.dirname(readPkgUp.sync({ cwd: targetStack.getFileName() }).path);
+  }
 }
 
 /**

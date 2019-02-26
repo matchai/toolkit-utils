@@ -1,6 +1,6 @@
 {
   "name": "toolkit-utils",
-  "version": "0.0.1-alpha.3",
+  "version": "0.0.1-alpha.6",
   "description": "A set of utilities for creating toolkits",
   "author": "Matan Kushner <matan.kushner@auth0.com>",
   "license": "MIT",
@@ -21,7 +21,7 @@
   },
   "dependencies": {
     "arrify": "^1.0.1",
-    "auth0-toolkit": "^0.0.1-alpha.8",
+    "auth0-toolkit": "^0.0.1-alpha.11",
     "cross-spawn": "^6.0.5",
     "fs-extra": "^7.0.1",
     "lodash": "^4.17.11",

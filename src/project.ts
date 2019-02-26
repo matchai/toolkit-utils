@@ -250,7 +250,7 @@ export default class Project {
    */
   public packageSet(jsonPath: string, value: any): void {
     _.set(this.projectPkg, jsonPath, value);
-    this.writeFile(this.projectRoot, this.package);
+    this.writeFile(this.fromRoot('package.json'), this.package);
   }
 
   /**

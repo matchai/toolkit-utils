@@ -27,7 +27,9 @@ function getStackTrace(): any[] {
  * @private
  */
 export function getToolkitRoot(): string {
-  const root = path.dirname(readPkgUp.sync({ cwd: __dirname }).path);
+  const root = path.dirname(
+    readPkgUp.sync({ cwd: __dirname, normalize: false }).path
+  );
 
   // Find the toolkit by finding the file which creates the Project instance outside of toolkit-utils
   const targetStack = getStackTrace().find(
@@ -41,7 +43,7 @@ export function getToolkitRoot(): string {
     throw new Error("Cannot get module root.");
   } else {
     return path.dirname(
-      readPkgUp.sync({ cwd: targetStack.getFileName() }).path
+      readPkgUp.sync({ cwd: targetStack.getFileName(), normalize: false }).path
     );
   }
 }

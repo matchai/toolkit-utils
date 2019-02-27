@@ -183,8 +183,8 @@ export default class Project {
    * @returns Boolean value based on the existence of dependency in package.json.
    */
   public hasAnyDep(deps: string[] | string): boolean {
-    if (typeof deps === "string") deps = [deps];
-    return deps.some(dep => {
+    const depsList = typeof deps === "string" ? [deps] : deps;
+    return depsList.some(dep => {
       return (
         this.packageHas("dependencies", dep) ||
         this.packageHas("devDependencies", dep) ||
@@ -285,8 +285,9 @@ export default class Project {
    * @param fileNames - The filename(s) including the extension to look for in the project root.
    */
   public hasAnyFile(fileNames: string[] | string): boolean {
-    if (typeof fileNames === "string") fileNames = [fileNames];
-    return fileNames.some(fileName => {
+    const fileNameList =
+      typeof fileNames === "string" ? [fileNames] : fileNames;
+    return fileNameList.some(fileName => {
       const filePath = path.join(this.projectRoot, fileName);
       return fs.existsSync(filePath) ? true : false;
     });
@@ -405,7 +406,7 @@ export default class Project {
     let shouldExit = exit;
 
     if (!script || !this.hasScript(script)) {
-      script ? logger.error(`Script could not be found: ${script}`) : "";
+      if (script) logger.error(`Script could not be found: ${script}`);
       printHelp(this.availableScripts);
       return shouldExit ? process.exit(1) : undefined;
     }
@@ -481,6 +482,7 @@ export default class Project {
 
     if (executables.length > 1) {
       const results: IScriptResult[] = [];
+      // tslint:disable-next-line: no-shadowed-variable
       for (const executable of executables.filter(Boolean)) {
         const result = this.execute(executable);
         if (result.status !== 0) {

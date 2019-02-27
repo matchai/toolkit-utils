@@ -7,10 +7,10 @@ import logger from "signale";
  * @returns The top-most callsite
  * @private
  */
-function getStackTrace(): Array<any> {
+function getStackTrace(): any[] {
   const old = Error.prepareStackTrace;
-  Error.prepareStackTrace = (_, stack) => stack;
-  const stack = (new Error().stack as any) as Array<any>;
+  Error.prepareStackTrace = (_, stackTrace) => stackTrace;
+  const stack = (new Error().stack as any) as any[];
   Error.prepareStackTrace = old;
   /* istanbul ignore next */
   if (!stack) {
@@ -73,8 +73,8 @@ export function getProjectPackage(
   }
 
   return {
-    root: pkgPath ? path.dirname(pkgPath) : toolkitRoot,
-    pkg: pkg || toolkitPkg
+    pkg: pkg || toolkitPkg,
+    root: pkgPath ? path.dirname(pkgPath) : toolkitRoot
   };
 }
 

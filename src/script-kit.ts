@@ -33,7 +33,7 @@ export default class ScriptKit {
    */
   get configDir(): string {
     const dirs = path.dirname(this.scriptFile).split(path.sep);
-    while (dirs.length > 0 && dirs.pop() !== "scripts") {}
+    while (dirs.length > 0 && dirs.pop() !== "scripts") {} // tslint:disable-line: no-empty
     dirs.push("config");
     return dirs.join(path.sep);
   }

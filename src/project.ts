@@ -18,7 +18,7 @@ export default class Project {
   }
 
   /**
-   * Path of the src dir.
+   * Path of the src dir in the toolkit.
    */
   get srcDir(): string {
     return path.dirname(require!.main!.filename);
@@ -309,11 +309,31 @@ export default class Project {
     try {
       const content =
         typeof data === "object" ? JSON.stringify(data, undefined, 2) : data;
-      fs.outputFileSync(filePath, content);
+      fs.outputFileSync(filePath, `${content}\n`);
 
       this.logger.info(`File written: ${filePath}`);
     } catch (error) {
       throw new Error(`Cannot create file: ${filePath}\n${error}`);
+    }
+  }
+
+  /**
+   * Copies a file from the toolkit to the project.
+   * Paths should be given relative to the toolkit root and project root.
+   * @param sourceFile - The path to the source file.
+   * @param newFile - The path to the destination file.
+   */
+  public copyFile(sourceFile: string, newFile: string) {
+    const sourcePath = this.fromToolkitRoot(sourceFile);
+    const destinationPath = this.fromRoot(newFile);
+
+    try {
+      fs.copySync(sourcePath, destinationPath);
+      this.logger.info(`Copied file: ${sourcePath} to ${destinationPath}`);
+    } catch (error) {
+      throw new Error(
+        `Cannot copy file: ${sourcePath} to ${destinationPath}\n${error}`
+      );
     }
   }
 

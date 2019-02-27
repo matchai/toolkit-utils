@@ -61,11 +61,13 @@ export function getProjectPackage(
 ): { root: string; pkg: { [key: string]: any } } {
   // Search for the package.json outside of the toolkit
   const { pkg, path: pkgPath } = readPkgUp.sync({
-    cwd: path.join(toolkitRoot, "..")
+    cwd: path.join(toolkitRoot, ".."),
+    normalize: false
   });
   if (!pkgPath) {
     const { pkg: currentPkg, path: currentPath } = readPkgUp.sync({
-      cwd: path.join(toolkitRoot)
+      cwd: path.join(toolkitRoot),
+      normalize: false
     });
 
     if (!currentPkg.name || currentPkg.name !== toolkitPkg.name) {

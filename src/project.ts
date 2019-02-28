@@ -186,9 +186,9 @@ export default class Project {
     const depsList = typeof deps === "string" ? [deps] : deps;
     return depsList.some(dep => {
       return (
-        this.packageHas("dependencies", dep) ||
-        this.packageHas("devDependencies", dep) ||
-        this.packageHas("peerDependencies", dep)
+        this.packageHas(["dependencies", dep]) ||
+        this.packageHas(["devDependencies", dep]) ||
+        this.packageHas(["peerDependencies", dep])
       );
     });
   }
@@ -232,7 +232,7 @@ export default class Project {
    * @param jsonPath - The path to check
    * @returns Whether the given path is in the package file
    */
-  public packageHas(...jsonPath: string[]): boolean {
+  public packageHas(jsonPath: string | string[]): boolean {
     return _.has(this.package, jsonPath);
   }
 
@@ -241,7 +241,7 @@ export default class Project {
    * @param jsonPath - The path to get a value from
    * @returns The value at the given path in the package file
    */
-  public packageGet(...jsonPath: string[]): any {
+  public packageGet(jsonPath: string | string[]): any {
     return _.get(this.package, jsonPath);
   }
 
@@ -250,7 +250,7 @@ export default class Project {
    * @param jsonPath - The path to get a value from
    * @param value - The value to set at the path
    */
-  public packageSet(jsonPath: string, value: any): void {
+  public packageSet(jsonPath: string | string[], value: any): void {
     _.set(this.projectPkg, jsonPath, value);
     this.writeFile("package.json", this.package);
   }

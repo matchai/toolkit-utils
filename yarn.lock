@@ -1138,10 +1138,10 @@ auth0-toolkit@^0.0.1-alpha.31:
     typescript "^3.3.1"
     yargs-parser "^13.0.0"
 
-auth0-toolkit@^0.0.1-alpha.32:
-  version "0.0.1-alpha.32"
-  resolved "https://a0us.jfrog.io/a0us/api/npm/auth0-common-npm/auth0-toolkit/-/auth0-toolkit-0.0.1-alpha.32.tgz#2dc1cc8707ddf7fd21473d6e99958a6a81259dec"
-  integrity sha1-LcHMhwfd9/0hRz1umZWKaoElnew=
+auth0-toolkit@^0.0.1-alpha.33:
+  version "0.0.1-alpha.33"
+  resolved "https://a0us.jfrog.io/a0us/api/npm/auth0-common-npm/auth0-toolkit/-/auth0-toolkit-0.0.1-alpha.33.tgz#21cd30e31471f3ca3319127336199007907121a5"
+  integrity sha1-Ic0w4xRx88ozGRJzNhmQB5BxIaU=
   dependencies:
     "@babel/core" "^7.2.2"
     "@babel/preset-env" "^7.3.1"

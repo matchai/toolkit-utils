@@ -7,8 +7,11 @@
     "inlineSources": true,
     "inlineSourceMap": true,
     "declaration": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "baseUrl": ".",
+    "paths": {
+      "*": ["test/*"]
+    }
   },
-  "include": ["src/**/*"],
   "exclude": ["node_modules", "lib", "**/*.spec.ts", "**/*.test.ts"]
 }

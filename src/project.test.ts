@@ -250,5 +250,5 @@ describe.each([babel, ts])(
 );
 
 function randomString() {
-  return generate("1234567890abcdef", 10);
+  return generate("abcdefghijklmnopqrstuvwxyz", 10);
 }

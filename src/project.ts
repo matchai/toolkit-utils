@@ -133,7 +133,7 @@ export default class Project {
         logger.warn("Debug mode is on");
       }
     } catch (e) {
-      throw new Error(`${e}\nCannot initialize project.`);
+      throw new Error(`Cannot initialize project.\n${e}`);
     }
   }
 
@@ -460,7 +460,7 @@ export default class Project {
       consoleErrorMessages.forEach(logger.error);
       return shouldExit ? process.exit(success ? 0 : 1) : results;
     } catch (e) {
-      const error = new Error(`${e}\nCannot finish execution of ${command}`);
+      const error = new Error(`Cannot finish execution of ${command}\n${e}`);
       logger.error(error.message);
       process.exit(1);
     }

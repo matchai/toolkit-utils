@@ -11,7 +11,8 @@ export enum ProjectType {
 }
 
 export async function createProject(projectType: ProjectType) {
-  const projectRoot = await makeTempDir();
+  // Create temp dir for test run containing the name of the project type
+  const projectRoot = await makeTempDir(projectType);
   const { toolkitRoot } = getPaths(projectType, projectRoot);
 
   await Promise.all([
@@ -21,36 +22,29 @@ export async function createProject(projectType: ProjectType) {
       path.join(projectRoot, "node_modules")
     ),
     fs.ensureSymlink(
-      path.join(__dirname, "../../node_modules/.bin/concurrently"),
+      path.join(__dirname, "../node_modules/.bin/concurrently"),
       path.join(projectRoot, "node_modules/.bin/concurrently")
     )
   ]);
 
-  return new Project({ toolkitRoot });
+  return {
+    projectRoot,
+    project: new Project({ toolkitRoot }),
+  }
 }
 
 function getPaths(projectType: ProjectType, projectRoot: string) {
   return {
-    toolkitRoot: path.join(projectRoot, projectType, "node_modules", "toolkit"),
+    toolkitRoot: path.join(projectRoot, "node_modules", "toolkit"),
     toolkitUtilsPath: path.join(
       projectRoot,
-      projectType,
       "node_modules",
       "toolkit-utils"
     )
   };
 }
 
-async function makeTempDir() {
-  const tempDirName = path.join(os.tmpdir(), "tk-utils-");
+async function makeTempDir(name: string): Promise<string> {
+  const tempDirName = path.join(os.tmpdir(), `${name}-`);
   return fs.mkdtemp(tempDirName);
 }
-
-export const stubLogger: BasicLogger = {
-  debug: () => {},
-  error: () => {},
-  info: () => {},
-  silly: () => {},
-  verbose: () => {},
-  warn: () => {}
-};

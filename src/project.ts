@@ -380,7 +380,7 @@ export default class Project {
     const prefixColors = Object.keys(fullScripts)
       .reduce(
         (pColors, s, i) =>
-          pColors.concat([`${colors[i % colors.length]}.bold.reset}`]),
+          pColors.concat([`${colors[i % colors.length]}.bold.reset`]),
         [] as string[]
       )
       .join(",");
@@ -407,10 +407,7 @@ export default class Project {
     const file = this.fromScriptsDir(scriptFile);
     const { script: scriptFunction } = require(file);
     if (typeof scriptFunction !== "function") {
-      this.logger.error(
-        new Error(`${scriptFile} does not export a \"script\" function.`)
-      );
-      process.exit(1);
+      throw new Error(`${scriptFile} does not export a \"script\" function.`);
     }
 
     return scriptFunction(this, args, new ScriptKit(this, scriptFile));
@@ -421,11 +418,10 @@ export default class Project {
    * @param exit - Whether to exit from process.
    * @returns Result of script
    */
-  public executeFromCLI({
-    exit = true
-  }: {
-    exit?: boolean;
-  }): void | IScriptResult | IScriptResult[] {
+  public executeFromCLI({ exit = true }: { exit?: boolean } = {}):
+    | void
+    | IScriptResult
+    | IScriptResult[] {
     const [executor, ignoredBin, script, ...args] = process.argv;
     const command = `"${path.basename(ignoredBin)} ${`${script} ${args.join(
       " "

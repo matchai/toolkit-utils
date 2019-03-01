@@ -1,3 +1,4 @@
+import fs from "fs";
 import generate from "nanoid/generate";
 import path from "path";
 import { Project } from ".";
@@ -54,6 +55,40 @@ describe("Project file manipulation", () => {
       );
     });
   });
+
+  describe("writeFile() method", () => {
+    it("fails to create files with null or undefined data", () => {
+      const { project } = createProject(ProjectType.Babel);
+
+      expect(() => project.writeFile("package.json", null)).toThrowError(
+        "Cannot write file. File data cannot be null or undefined."
+      );
+      expect(() => project.writeFile("package.json", undefined)).toThrowError(
+        "Cannot write file. File data cannot be null or undefined."
+      );
+    });
+  });
+
+  describe("copyFile() method", () => {
+    it("creates a copy of the source file", () => {
+      const { project, projectRoot } = createProject(ProjectType.Babel);
+
+      project.copyFile("text-file.txt", "copied-file.txt");
+      const copiedFile = fs.readFileSync(
+        path.join(projectRoot, "copied-file.txt"),
+        "utf8"
+      );
+
+      expect(copiedFile).toBe("Hello world!\n");
+    });
+
+    it("fails to copy a non-existant file", () => {
+      const { project } = createProject(ProjectType.Babel);
+      expect(() =>
+        project.copyFile("non-existant.file", "copied-file.txt")
+      ).toThrowError(/^Cannot copy file:/);
+    });
+  });
 });
 
 describe.each([babel, ts])(
@@ -86,6 +121,7 @@ describe.each([babel, ts])(
     it(`${projectName} - should have availableScripts`, () => {
       expect(project.availableScripts).toEqual([
         "create-file",
+        "multiple-results",
         "superscript",
         "ts-script"
       ]);
@@ -227,7 +263,7 @@ describe.each([babel, ts])(
       });
     });
 
-    describe(`${projectName} - hasAnyFile method()`, () => {
+    describe(`${projectName} - hasAnyFile() method`, () => {
       it("should return true for an existing file", () => {
         expect(project.hasAnyFile("package.json")).toBe(true);
       });
@@ -244,6 +280,72 @@ describe.each([babel, ts])(
             "another-nonexisting.file"
           ])
         ).toBe(true);
+      });
+    });
+
+    describe(`${projectName} - bin() method`, () => {
+      it("returns the relative path to the executable bin", () => {
+        const base = path.relative(__dirname, projectRoot);
+        const binPath = path.join(base, "node_modules/.bin/concurrently");
+        expect(project.bin("concurrently")).toBe(binPath.replace("..", "."));
+      });
+    });
+
+    describe(`${projectName} - getConcurrentlyArgs() method`, () => {
+      it(`should get concurrently args and kill others on fail`, () => {
+        expect(
+          project.getConcurrentlyArgs({ build: "echo 'building now'" })
+        ).toEqual([
+          "--kill-others-on-fail",
+          "--prefix",
+          "[{name}]",
+          "--names",
+          "build",
+          "--prefix-colors",
+          "bgBlue.bold.reset",
+          "\"echo 'building now'\""
+        ]);
+      });
+
+      it(`should get concurrently args and not kill others on fail`, () => {
+        expect(
+          project.getConcurrentlyArgs(
+            { build: "echo 'building now'" },
+            { killOthers: false }
+          )
+        ).toEqual([
+          "--prefix",
+          "[{name}]",
+          "--names",
+          "build",
+          "--prefix-colors",
+          "bgBlue.bold.reset",
+          "\"echo 'building now'\""
+        ]);
+      });
+    });
+
+    describe(`${projectName} - executeScriptFile() method`, () => {
+      it("should execute a script from the scripts directory", () => {
+        const result = project.executeScriptFile("multiple-results") as any[];
+        expect(result).toHaveLength(2);
+      });
+
+      it("should throw when no script function is available", () => {
+        expect(() => project.executeScriptFile("ts-script")).toThrowError(
+          'ts-script does not export a "script" function.'
+        );
+      });
+    });
+
+    describe(`${projectName} - executeFromCLI() method`, () => {
+      process.exit = jest.fn((code?: number) => ({ exitCode: code })) as never;
+      console.log = jest.fn(() => {}); // tslint:disable-line
+
+      it("should exit with error code for non-existing script", () => {
+        process.argv = ["node", "src", "non-existing-script"];
+        const exit = project.executeFromCLI();
+        expect(exit).toEqual({ exitCode: 1 });
       });
     });
   }

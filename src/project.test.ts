@@ -36,6 +36,17 @@ describe("Project dependant", () => {
   });
 });
 
+describe("Project file manipulation", () => {
+  it("packageSet() method", () => {
+    const { project } = createProject(ProjectType.Babel);
+
+    project.packageSet("scripts.exampleScript", "echo 'Hello world!'");
+    expect(project.packageGet("scripts.exampleScript")).toBe(
+      "echo 'Hello world!'"
+    );
+  });
+});
+
 describe.each([babel, ts])(
   "Same on all projects",
   ({ project, projectRoot }) => {
@@ -144,6 +155,29 @@ describe.each([babel, ts])(
 
       it("should return undefined for non-existing environment variables", () => {
         expect(project.parseEnv("fakeEnvVariable")).toBe(undefined);
+      });
+    });
+
+    describe(`${projectName} - packageHas() method`, () => {
+      it("should return true for existing JSON paths", () => {
+        expect(project.packageHas(["scripts", "test"])).toBe(true);
+        expect(project.packageHas("scripts.test")).toBe(true);
+      });
+
+      it("should return false for non-existing JSON paths", () => {
+        expect(project.packageHas(["nonExisting", "path"])).toBe(false);
+        expect(project.packageHas("scripts.doesntExist")).toBe(false);
+      });
+    });
+
+    describe(`${projectName} - packageGet() method`, () => {
+      it("should return the value for existing JSON paths", () => {
+        expect(project.packageGet("version")).toBe("1.0.0");
+      });
+
+      it("should return undefined for non-existing JSON paths", () => {
+        expect(project.packageGet(["nonExisting", "path"])).toBe(undefined);
+        expect(project.packageGet("scripts.doesntExist")).toBe(undefined);
       });
     });
   }

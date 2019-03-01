@@ -1,6 +1,7 @@
 import fs from "fs-extra";
 import os from "os";
 import path from "path";
+import { Signale } from "signale";
 import { Project } from "../src/index";
 
 const fixtures = path.join(__dirname, "fixtures");
@@ -29,7 +30,8 @@ export function createProject(projectType: ProjectType) {
     projectRoot,
     project: new Project({
       toolkitRoot,
-      filesDir: path.join(toolkitRoot, "lib")
+      filesDir: path.join(toolkitRoot, "lib"),
+      logger: new Signale({ disabled: true }) // Stub out logger
     })
   };
 }

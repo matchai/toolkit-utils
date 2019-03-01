@@ -4,19 +4,12 @@ import spawn from "cross-spawn";
 import fs from "fs-extra";
 import _ from "lodash";
 import path from "path";
-import logger, { Signale } from "signale";
+import { Signale } from "signale";
 import { Executable, IScriptResult } from "./@types";
 import { getProjectPackage, getToolkitRoot, printHelp } from "./project-util";
 import ScriptKit from "./script-kit";
 
 export default class Project {
-  /**
-   * A logger instance
-   */
-  get logger(): Signale {
-    return logger;
-  }
-
   /**
    * Path of the src dir in the toolkit.
    */
@@ -101,6 +94,7 @@ export default class Project {
   }
 
   public debug: boolean;
+  public logger: Signale;
   private projectRoot: string;
   private projectPkg: { [key: string]: any } = {};
   private filesDir: string;
@@ -115,13 +109,15 @@ export default class Project {
    * @param options.debug - Enables debug logs.
    */
   constructor({
-    toolkitRoot = getToolkitRoot(),
+    debug = false,
+    logger = new Signale(),
     filesDir = path.dirname(require!.main!.filename),
-    debug = false
+    toolkitRoot = getToolkitRoot()
   }: {
-    toolkitRoot?: string;
-    filesDir?: string;
     debug?: boolean;
+    logger?: Signale;
+    filesDir?: string;
+    toolkitRoot?: string;
   } = {}) {
     try {
       const toolkitPkg = fs.readJSONSync(
@@ -132,6 +128,7 @@ export default class Project {
         toolkitPkg
       );
       this.debug = debug;
+      this.logger = logger;
       this.projectRoot = projectRoot;
       this.projectPkg = projectPkg;
       this.filesDir = filesDir;
@@ -139,7 +136,7 @@ export default class Project {
       this.toolkitPkg = toolkitPkg;
 
       if (debug) {
-        logger.warn("Debug mode is on");
+        this.logger.warn("Debug mode is on");
       }
     } catch (e) {
       throw new Error(`Cannot initialize project.\n${e}`);
@@ -410,7 +407,7 @@ export default class Project {
     const file = this.fromScriptsDir(scriptFile);
     const { script: scriptFunction } = require(file);
     if (typeof scriptFunction !== "function") {
-      logger.error(
+      this.logger.error(
         new Error(`${scriptFile} does not export a \"script\" function.`)
       );
       process.exit(1);
@@ -436,7 +433,7 @@ export default class Project {
     let shouldExit = exit;
 
     if (!script || !this.hasScript(script)) {
-      if (script) logger.error(`Script could not be found: ${script}`);
+      if (script) this.logger.error(`Script could not be found: ${script}`);
       printHelp(this.availableScripts);
       return shouldExit ? process.exit(1) : undefined;
     }
@@ -453,25 +450,27 @@ export default class Project {
           shouldExit && (result.exit === undefined ? true : result.exit);
         // Log as necessary
         if (result.error instanceof Error) {
-          logger.error(result.error.message); // JS Error in result
+          this.logger.error(result.error.message); // JS Error in result
           consoleErrorMessages.push(result.error);
         } else if (result.error) {
-          logger.error(result.error); // Standard error in result
+          this.logger.error(result.error); // Standard error in result
         } else if (result.status !== 0) {
           emitGeneralError = true;
         }
       });
 
       if (emitGeneralError) {
-        logger.error(`${script} finished with error in command: ${command}`); // Fail without error message
+        this.logger.error(
+          `${script} finished with error in command: ${command}`
+        ); // Fail without error message
       }
 
       // Throw full Error objects
-      consoleErrorMessages.forEach(logger.error);
+      consoleErrorMessages.forEach(this.logger.error);
       return shouldExit ? process.exit(success ? 0 : 1) : results;
     } catch (e) {
       const error = new Error(`Cannot finish execution of ${command}\n${e}`);
-      logger.error(error.message);
+      this.logger.error(error.message);
       process.exit(1);
     }
   }
@@ -538,7 +537,7 @@ export default class Project {
     }
 
     if (this.debug) {
-      logger.debug(
+      this.logger.debug(
         new Error().stack!.replace(/^Error/, `Stack trace for ${exe}`)
       );
     }

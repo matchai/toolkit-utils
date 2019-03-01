@@ -1,6 +1,5 @@
 import path from "path";
 import readPkgUp from "read-pkg-up";
-import logger from "signale";
 
 /**
  * Returns callsites from the V8 stack trace API
@@ -71,8 +70,7 @@ export function getProjectPackage(
     });
 
     if (!currentPkg.name || currentPkg.name !== toolkitPkg.name) {
-      logger.error(new Error("Cannot find project root"));
-      process.exit(1);
+      throw new Error("Cannot find project root");
     }
   }
 

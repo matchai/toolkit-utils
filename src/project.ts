@@ -21,7 +21,7 @@ export default class Project {
    * Path of the src dir in the toolkit.
    */
   get srcDir(): string {
-    return path.dirname(require!.main!.filename);
+    return this.filesDir || path.dirname(require!.main!.filename);
   }
 
   /**
@@ -104,15 +104,24 @@ export default class Project {
   public debug: boolean;
   private projectRoot: string;
   private projectPkg: { [key: string]: any } = {};
+  private filesDir: string;
   private toolkitRoot: string;
   private toolkitPkg: { [key: string]: any } = {};
 
+  /**
+   * The utility class for viewing and manipulating project properties, as well as executing scripts.
+   * @param options - Options
+   * @param options.toolkitRoot - The root of the toolkit using this library.
+   * @param options.filesDir - The directory of the `scripts` and `config` directories. May be the `src` or `lib` directory where the toolkit is called from.
+   * @param options.debug - Enables debug logs.
+   */
   constructor({
     toolkitRoot = getToolkitRoot(),
+    filesDir = path.dirname(require!.main!.filename),
     debug = false
   }: {
     toolkitRoot?: string;
-    cwd?: string;
+    filesDir?: string;
     debug?: boolean;
   } = {}) {
     try {
@@ -123,11 +132,12 @@ export default class Project {
         toolkitRoot,
         toolkitPkg
       );
+      this.debug = debug;
       this.projectRoot = projectRoot;
       this.projectPkg = projectPkg;
+      this.filesDir = filesDir;
       this.toolkitRoot = toolkitRoot;
       this.toolkitPkg = toolkitPkg;
-      this.debug = debug;
 
       if (debug) {
         logger.warn("Debug mode is on");

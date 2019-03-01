@@ -3,8 +3,18 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "types": "lib/index.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "dotenv": "6.2.0"
+  },
+  "devDependencies": {
+    "eslint": "5.14.1"
+  },
+  "peerDependencies": {
+    "browserify": "16.2.3"
   },
   "author": "",
   "license": "MIT"

@@ -70,9 +70,7 @@ export default class Project {
    * Determine whether a project is compiled via Typescript or Babel.
    */
   get isCompiled(): boolean {
-    return (
-      this.isTypeScript || this.hasAnyDep(["babel-cli", "babel-preset-env"])
-    );
+    return this.isTypeScript || this.packageHas(["scripts", "build"]);
   }
 
   /**
@@ -101,6 +99,7 @@ export default class Project {
       .map(script => script.replace(/\.(js|ts)$/, ""))
       .sort();
   }
+
   public debug: boolean;
   private projectRoot: string;
   private projectPkg: { [key: string]: any } = {};
@@ -425,10 +424,11 @@ export default class Project {
    * @param exit - Whether to exit from process.
    * @returns Result of script
    */
-  public executeFromCLI({ exit = true } = {}):
-    | void
-    | IScriptResult
-    | IScriptResult[] {
+  public executeFromCLI({
+    exit = true
+  }: {
+    exit?: boolean;
+  }): void | IScriptResult | IScriptResult[] {
     const [executor, ignoredBin, script, ...args] = process.argv;
     const command = `"${path.basename(ignoredBin)} ${`${script} ${args.join(
       " "

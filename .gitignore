@@ -82,3 +82,6 @@ typings/
 # Build directory
 dist/
 lib/
+
+# Exclude node_modules fixture
+!test/fixtures/node_modules

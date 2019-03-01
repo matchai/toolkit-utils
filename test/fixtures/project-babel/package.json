@@ -4,7 +4,17 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "build": "toolkit build",
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "dotenv": "6.2.0"
+  },
+  "devDependencies": {
+    "eslint": "5.14.1"
+  },
+  "peerDependencies": {
+    "browserify": "16.2.3"
   },
   "author": "",
   "license": "MIT"

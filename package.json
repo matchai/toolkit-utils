@@ -27,6 +27,7 @@
     "validate": "auth0-toolkit validate"
   },
   "dependencies": {
+    "@types/nanoid": "^1.2.1",
     "arrify": "^1.0.1",
     "cross-spawn": "^6.0.5",
     "fs-extra": "^7.0.1",
@@ -45,6 +46,7 @@
     "@types/node": "^10.12.21",
     "@types/read-pkg-up": "^3.0.1",
     "@types/signale": "^1.2.0",
-    "auth0-toolkit": "0.0.1-alpha.39"
+    "auth0-toolkit": "0.0.1-alpha.39",
+    "nanoid": "^2.0.1"
   }
 }

@@ -37,13 +37,22 @@ describe("Project dependant", () => {
 });
 
 describe("Project file manipulation", () => {
-  it("packageSet() method", () => {
-    const { project } = createProject(ProjectType.Babel);
+  describe("packageSet() method", () => {
+    it("overwrites existing package.json properties", () => {
+      const { project } = createProject(ProjectType.Babel);
 
-    project.packageSet("scripts.exampleScript", "echo 'Hello world!'");
-    expect(project.packageGet("scripts.exampleScript")).toBe(
-      "echo 'Hello world!'"
-    );
+      project.packageSet("scripts.test", "echo 'Hello world!'");
+      expect(project.packageGet("scripts.test")).toBe("echo 'Hello world!'");
+    });
+
+    it("creates new package.json properties", () => {
+      const { project } = createProject(ProjectType.Babel);
+
+      project.packageSet("scripts.exampleScript", "echo 'Hello world!'");
+      expect(project.packageGet("scripts.exampleScript")).toBe(
+        "echo 'Hello world!'"
+      );
+    });
   });
 });
 
@@ -75,7 +84,11 @@ describe.each([babel, ts])(
     });
 
     it(`${projectName} - should have availableScripts`, () => {
-      expect(project.availableScripts).toEqual(["create-file"]);
+      expect(project.availableScripts).toEqual([
+        "create-file",
+        "superscript",
+        "ts-script"
+      ]);
     });
 
     it(`${projectName} - should have a package`, () => {
@@ -119,6 +132,9 @@ describe.each([babel, ts])(
         expect(project.hasAnyDep("dotenv")).toBe(true);
         expect(project.hasAnyDep("eslint")).toBe(true);
         expect(project.hasAnyDep("browserify")).toBe(true);
+        expect(project.hasAnyDep(["dotenv", "eslint", "browserify"])).toBe(
+          true
+        );
       });
 
       it("should return false for non-existing dependencies", () => {
@@ -178,6 +194,56 @@ describe.each([babel, ts])(
       it("should return undefined for non-existing JSON paths", () => {
         expect(project.packageGet(["nonExisting", "path"])).toBe(undefined);
         expect(project.packageGet("scripts.doesntExist")).toBe(undefined);
+      });
+    });
+
+    describe(`${projectName} - hasScript() method`, () => {
+      it("should return a script .js file", () => {
+        expect(project.hasScript("create-file")).toBe(
+          path.join(
+            projectRoot,
+            "node_modules/toolkit/lib/scripts/create-file.js"
+          )
+        );
+      });
+
+      it("should return a script .ts file", () => {
+        expect(project.hasScript("ts-script")).toBe(
+          path.join(
+            projectRoot,
+            "node_modules/toolkit/lib/scripts/ts-script.ts"
+          )
+        );
+      });
+
+      it("should return a superscript folder", () => {
+        expect(project.hasScript("superscript")).toBe(
+          path.join(projectRoot, "node_modules/toolkit/lib/scripts/superscript")
+        );
+      });
+
+      it("should return null for a non-existant script", () => {
+        expect(project.hasScript("nonExistant")).toBe(null);
+      });
+    });
+
+    describe(`${projectName} - hasAnyFile method()`, () => {
+      it("should return true for an existing file", () => {
+        expect(project.hasAnyFile("package.json")).toBe(true);
+      });
+
+      it("should return false for a non-existing file", () => {
+        expect(project.hasAnyFile("non-existing.file")).toBe(false);
+      });
+
+      it("should return true for one existing and multiple non-existing files", () => {
+        expect(
+          project.hasAnyFile([
+            "non-existing.file",
+            "package.json",
+            "another-nonexisting.file"
+          ])
+        ).toBe(true);
       });
     });
   }

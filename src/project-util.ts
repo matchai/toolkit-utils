@@ -38,6 +38,7 @@ export function getToolkitRoot(): string {
       !path.dirname(e.getFileName()).startsWith(root)
   );
 
+  /* istanbul ignore else  */
   if (!targetStack) {
     throw new Error("Cannot get module root.");
   } else {
@@ -69,7 +70,7 @@ export function getProjectPackage(
       normalize: false
     });
 
-    if (!currentPkg.name || currentPkg.name !== toolkitPkg.name) {
+    if (!currentPkg || currentPkg.name !== toolkitPkg.name) {
       throw new Error("Cannot find project root");
     }
   }

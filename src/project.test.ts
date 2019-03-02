@@ -125,7 +125,7 @@ describe.each([babel, ts])(
         "multiple-results",
         "non-exiting",
         "non-exporting",
-        "superscript",
+        "super-script",
         "throw-script",
         "ts-script"
       ]);
@@ -256,9 +256,12 @@ describe.each([babel, ts])(
         );
       });
 
-      it("should return a superscript folder", () => {
-        expect(project.hasScript("superscript")).toBe(
-          path.join(projectRoot, "node_modules/toolkit/lib/scripts/superscript")
+      it("should return a super-script folder", () => {
+        expect(project.hasScript("super-script")).toBe(
+          path.join(
+            projectRoot,
+            "node_modules/toolkit/lib/scripts/super-script"
+          )
         );
       });
 

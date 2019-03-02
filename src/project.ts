@@ -138,8 +138,8 @@ export default class Project {
       if (debug) {
         this.logger.warn("Debug mode is on");
       }
-    } catch (e) {
-      throw new Error(`Cannot initialize project.\n${e}`);
+    } catch (error) {
+      throw new Error(`Cannot initialize project.\n${error}`);
     }
   }
 
@@ -407,7 +407,7 @@ export default class Project {
     const file = this.fromScriptsDir(scriptFile);
     const { script: scriptFunction } = require(file);
     if (typeof scriptFunction !== "function") {
-      throw new Error(`${scriptFile} does not export a \"script\" function.`);
+      throw new Error(`"${scriptFile}" does not export a \"script\" function.`);
     }
 
     return scriptFunction(this, args, new ScriptKit(this, scriptFile));
@@ -464,10 +464,8 @@ export default class Project {
       // Throw full Error objects
       consoleErrorMessages.forEach(this.logger.error);
       return shouldExit ? process.exit(success ? 0 : 1) : results;
-    } catch (e) {
-      const error = new Error(`Cannot finish execution of ${command}\n${e}`);
-      this.logger.error(error.message);
-      process.exit(1);
+    } catch (error) {
+      throw new Error(`Cannot finish the execution of ${command}\n${error}`);
     }
   }
 

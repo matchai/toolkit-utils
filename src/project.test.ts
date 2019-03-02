@@ -1,7 +1,7 @@
 import fs from "fs";
 import generate from "nanoid/generate";
 import path from "path";
-import { Project } from ".";
+import { IScriptResult, Project } from ".";
 import { createProject, ProjectType } from "../test/test-helper";
 
 // Create variables outside of before all to be able to use `.each`
@@ -121,8 +121,12 @@ describe.each([babel, ts])(
     it(`${projectName} - should have availableScripts`, () => {
       expect(project.availableScripts).toEqual([
         "create-file",
+        "error-script",
         "multiple-results",
+        "non-exiting",
+        "non-exporting",
         "superscript",
+        "throw-script",
         "ts-script"
       ]);
     });
@@ -333,19 +337,110 @@ describe.each([babel, ts])(
 
       it("should throw when no script function is available", () => {
         expect(() => project.executeScriptFile("ts-script")).toThrowError(
-          'ts-script does not export a "script" function.'
+          '"ts-script" does not export a "script" function.'
         );
       });
     });
 
     describe(`${projectName} - executeFromCLI() method`, () => {
-      process.exit = jest.fn((code?: number) => ({ exitCode: code })) as never;
-      console.log = jest.fn(() => {}); // tslint:disable-line
+      /* tslint:disable */
+      beforeAll(() => {
+        process.exit = jest.fn((code?: number) => ({
+          exitCode: code
+        })) as never;
+        console.log = jest.fn(() => {});
+      });
+
+      afterAll(() => {
+        process.exit.mockRestore();
+        console.log.mockRestore();
+      });
+      /* tslint:enable */
 
       it("should exit with error code for non-existing script", () => {
         process.argv = ["node", "src", "non-existing-script"];
-        const exit = project.executeFromCLI();
-        expect(exit).toEqual({ exitCode: 1 });
+        const result = project.executeFromCLI();
+        expect(result).toEqual({ exitCode: 1 });
+      });
+
+      it("should return with undefined for non-existing script (exit = false)", () => {
+        process.argv = ["node", "src", "non-existing-script"];
+        const result = project.executeFromCLI({ exit: false });
+        expect(result).toEqual(undefined);
+      });
+
+      it("should return with undefined if no script is given (exit = false)", () => {
+        process.argv = ["node", "src"];
+        const result = project.executeFromCLI({ exit: false });
+        expect(result).toEqual(undefined);
+      });
+
+      it("should not process.exit() from script (exit = false)", () => {
+        process.argv = ["node", "src", "non-exiting"];
+        const result = project.executeFromCLI() as IScriptResult;
+        expect(result).toEqual({ exit: false, status: 0 });
+      });
+
+      it("should return an exit code from a script with a single result", () => {
+        process.argv = ["node", "src", "create-file"];
+        const result = project.executeFromCLI() as IScriptResult;
+        const content = fs.readFileSync(
+          path.join(projectRoot, "created-by-script.txt"),
+          "utf8"
+        );
+        expect(content).toBe("cli\n");
+        expect(result).toEqual({ exitCode: 0 });
+      });
+
+      it("should return an exit code from a script with a single result (exit = false)", () => {
+        process.argv = ["node", "src", "create-file"];
+        const result = project.executeFromCLI({ exit: false }) as IScriptResult;
+        const content = fs.readFileSync(
+          path.join(projectRoot, "created-by-script.txt"),
+          "utf8"
+        );
+        expect(content).toBe("cli\n");
+        expect(result).toEqual({ status: 0 });
+      });
+
+      it("should return with undefined for non-existing script (exit = false)", () => {
+        process.argv = ["node", "src", "multiple-results"];
+        const result = project.executeFromCLI({
+          exit: false
+        }) as IScriptResult[];
+        expect(result).toEqual([{ status: 0 }, { status: 0 }]);
+      });
+
+      it("should return an exit code for scripts returning errors", () => {
+        process.argv = ["node", "src", "error-script"];
+        const result = project.executeFromCLI() as IScriptResult;
+        expect(result).toEqual({ exitCode: 1 });
+      });
+
+      it("should return an exit code for scripts returning errors (exit = false)", () => {
+        process.argv = ["node", "src", "error-script"];
+        const result = project.executeFromCLI({
+          exit: false
+        }) as IScriptResult[];
+        expect(result).toEqual([
+          { status: 1, error: new Error("error object") },
+          { status: 1, error: "text" },
+          { status: 1 }
+        ]);
+      });
+
+      it("should throw if a script throws (exit = false)", () => {
+        process.argv = ["node", "src", "throw-script"];
+        expect(() => project.executeFromCLI({ exit: false })).toThrowError(
+          /^Cannot finish the execution of \"src throw-script\"/
+        );
+      });
+
+      it("should throw if a script file does not export a script", () => {
+        process.argv = ["node", "src", "non-exporting"];
+        expect(() => project.executeFromCLI()).toThrowError(
+          /\"non-exporting\" does not export a \"script\" function.$/
+        );
       });
     });
   }

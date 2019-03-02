@@ -31,7 +31,8 @@ export function createProject(projectType: ProjectType) {
     project: new Project({
       toolkitRoot,
       filesDir: path.join(toolkitRoot, "lib"),
-      logger: new Signale({ disabled: true }) // Stub out logger
+      logger: new Signale({ disabled: true }), // Stub out logger
+      silent: true
     })
   };
 }

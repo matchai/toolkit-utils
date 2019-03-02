@@ -95,6 +95,7 @@ export default class Project {
 
   public debug: boolean;
   public logger: Signale;
+  private silent: boolean;
   private projectRoot: string;
   private projectPkg: { [key: string]: any } = {};
   private filesDir: string;
@@ -110,11 +111,13 @@ export default class Project {
    */
   constructor({
     debug = false,
+    silent = false,
     logger = new Signale(),
     filesDir = path.dirname(require!.main!.filename),
     toolkitRoot = getToolkitRoot()
   }: {
     debug?: boolean;
+    silent?: boolean;
     logger?: Signale;
     filesDir?: string;
     toolkitRoot?: string;
@@ -129,6 +132,7 @@ export default class Project {
       );
       this.debug = debug;
       this.logger = logger;
+      this.silent = silent;
       this.projectRoot = projectRoot;
       this.projectPkg = projectPkg;
       this.filesDir = filesDir;
@@ -520,7 +524,9 @@ export default class Project {
     const executable = executables[0];
     let exe = typeof executable === "string" ? executable : "";
     let args;
-    let options: SpawnSyncOptions = { stdio: "inherit" };
+    let options: SpawnSyncOptions = {
+      stdio: this.silent ? "ignore" : "inherit"
+    };
 
     if (Array.isArray(executable)) {
       [exe, args] = executable;

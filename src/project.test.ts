@@ -443,6 +443,60 @@ describe.each([babel, ts])(
         );
       });
     });
+
+    describe(`${projectName} - execute() method`, () => {
+      it("should execute a single command", () => {
+        const result = project.execute("echo");
+        expect(result.status).toBe(0);
+      });
+
+      it("should execute a single failing command", () => {
+        const result = project.execute("non-existing-command");
+        expect(result.error).toBeDefined();
+      });
+
+      it("should execute a single command with parameters", () => {
+        const result = project.execute(["echo", [""]]);
+        expect(result.status).toBe(0);
+      });
+
+      it("should execute multiple commands", () => {
+        const result = project.execute(["echo", ["echo", [""]]]);
+        expect(result.status).toBe(0);
+      });
+
+      it("should execute multiple commands with some failures", () => {
+        const result = project.execute("echo", "non-existing-command", [
+          "echo",
+          [""]
+        ]);
+        expect(result.error).toBeDefined();
+        expect(result.previousResults).toHaveLength(1);
+      });
+
+      it("should execute multiple concurrent commands", () => {
+        const result = project.execute({
+          echo1: "echo",
+          echo2: ["echo", [""]]
+        });
+        expect(result.status).toBe(0);
+      });
+
+      it("should execute multiple serial and concurrent commands", () => {
+        const result = project.execute(
+          ["echo", [""]],
+          null,
+          { echo1: "echo", echo2: ["echo", [""]] },
+          ["echo", [""]]
+        );
+        expect(result.status).toBe(0);
+      });
+
+      it("should return success if no commands provided", () => {
+        const result = project.execute();
+        expect(result.status).toBe(0);
+      });
+    });
   }
 );
 

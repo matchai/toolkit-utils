@@ -499,6 +499,11 @@ describe.each([babel, ts])(
         const result = project.execute();
         expect(result.status).toBe(0);
       });
+
+      it("should return success if all concurrently args are empty", () => {
+        const result = project.execute({});
+        expect(result.status).toBe(0);
+      });
     });
   }
 );

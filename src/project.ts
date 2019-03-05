@@ -532,6 +532,7 @@ export default class Project {
       [exe, args] = executable;
       options = (executable[2] as SpawnSyncOptions) || options;
     } else if (typeof executable === "object") {
+      if (Object.keys(executable).length === 0) return { status: 0 };
       exe = this.bin("concurrently");
       args = this.getConcurrentlyArgs(executable);
     }

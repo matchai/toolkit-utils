@@ -501,7 +501,11 @@ describe.each([babel, ts])(
       });
 
       it("should return success if all concurrently args are empty", () => {
-        const result = project.execute({});
+        const result = project.execute({
+          lint: null,
+          test: null,
+          typescript: null
+        });
         expect(result.status).toBe(0);
       });
     });

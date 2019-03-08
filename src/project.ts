@@ -9,7 +9,67 @@ import { Executable, IScriptResult } from "./@types";
 import { getProjectPackage, getToolkitRoot, printHelp } from "./project-util";
 import ScriptKit from "./script-kit";
 
+/**
+ * @classDesc
+ * The utility class for viewing and manipulating project properties as well as executing scripts.
+ */
 export default class Project {
+  public debug: boolean;
+  public logger: Signale;
+  private silent: boolean;
+  private projectRoot: string;
+  private projectPkg: { [key: string]: any } = {};
+  private filesDir: string;
+  private toolkitRoot: string;
+  private toolkitPkg: { [key: string]: any } = {};
+
+  /**
+   * The utility class for viewing and manipulating project properties as well as executing scripts.
+   * @param [options] - Options
+   * @param [options.debug] - Enables debug logs.
+   * @param [options.silent] - Silences the logger.
+   * @param [options.logger] - The instance of Signale to be used as a logger.
+   * @param [options.filesDir] - The directory of the `scripts` and `config` directories. May be the `src` or `lib` directory where the toolkit is called from.
+   * @param [options.toolkitRoot] - The root of the toolkit using this library.
+   */
+  constructor({
+    debug = false,
+    silent = false,
+    logger = new Signale(),
+    filesDir = path.dirname(require!.main!.filename),
+    toolkitRoot = getToolkitRoot()
+  }: {
+    debug?: boolean;
+    silent?: boolean;
+    logger?: Signale;
+    filesDir?: string;
+    toolkitRoot?: string;
+  } = {}) {
+    try {
+      const toolkitPkg = fs.readJSONSync(
+        path.join(toolkitRoot, "package.json")
+      );
+      const { pkg: projectPkg, root: projectRoot } = getProjectPackage(
+        toolkitRoot,
+        toolkitPkg
+      );
+      this.debug = debug;
+      this.logger = logger;
+      this.silent = silent;
+      this.projectRoot = projectRoot;
+      this.projectPkg = projectPkg;
+      this.filesDir = filesDir;
+      this.toolkitRoot = toolkitRoot;
+      this.toolkitPkg = toolkitPkg;
+
+      if (debug) {
+        this.logger.warn("Debug mode is on");
+      }
+    } catch (error) {
+      throw new Error(`Cannot initialize project.\n${error}`);
+    }
+  }
+
   /**
    * Path of the src dir in the toolkit.
    */
@@ -91,60 +151,6 @@ export default class Project {
       .readdirSync(this.scriptsDir)
       .map(script => script.replace(/\.(js|ts)$/, ""))
       .sort();
-  }
-
-  public debug: boolean;
-  public logger: Signale;
-  private silent: boolean;
-  private projectRoot: string;
-  private projectPkg: { [key: string]: any } = {};
-  private filesDir: string;
-  private toolkitRoot: string;
-  private toolkitPkg: { [key: string]: any } = {};
-
-  /**
-   * The utility class for viewing and manipulating project properties, as well as executing scripts.
-   * @param options - Options
-   * @param options.toolkitRoot - The root of the toolkit using this library.
-   * @param options.filesDir - The directory of the `scripts` and `config` directories. May be the `src` or `lib` directory where the toolkit is called from.
-   * @param options.debug - Enables debug logs.
-   */
-  constructor({
-    debug = false,
-    silent = false,
-    logger = new Signale(),
-    filesDir = path.dirname(require!.main!.filename),
-    toolkitRoot = getToolkitRoot()
-  }: {
-    debug?: boolean;
-    silent?: boolean;
-    logger?: Signale;
-    filesDir?: string;
-    toolkitRoot?: string;
-  } = {}) {
-    try {
-      const toolkitPkg = fs.readJSONSync(
-        path.join(toolkitRoot, "package.json")
-      );
-      const { pkg: projectPkg, root: projectRoot } = getProjectPackage(
-        toolkitRoot,
-        toolkitPkg
-      );
-      this.debug = debug;
-      this.logger = logger;
-      this.silent = silent;
-      this.projectRoot = projectRoot;
-      this.projectPkg = projectPkg;
-      this.filesDir = filesDir;
-      this.toolkitRoot = toolkitRoot;
-      this.toolkitPkg = toolkitPkg;
-
-      if (debug) {
-        this.logger.warn("Debug mode is on");
-      }
-    } catch (error) {
-      throw new Error(`Cannot initialize project.\n${error}`);
-    }
   }
 
   /**

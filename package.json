@@ -19,9 +19,9 @@
   "scripts": {
     "prepublishOnly": "npm run build",
     "test": "auth0-toolkit test",
-    "test:update": "auth0-toolkit test --updateSnapshot",
-    "lint": "auth0-toolkit lint",
     "build": "auth0-toolkit build",
+    "build:doc": "auth0-toolkit doc",
+    "lint": "auth0-toolkit lint",
     "format": "auth0-toolkit format",
     "watch": "concurrently 'npm run build -- --watch' 'npm run test -- --watch'",
     "validate": "auth0-toolkit validate"
@@ -29,7 +29,7 @@
   "dependencies": {
     "@types/nanoid": "^1.2.1",
     "arrify": "^1.0.1",
-    "auth0-toolkit": "0.0.1-alpha.51",
+    "auth0-toolkit": "0.0.1-alpha.54",
     "cross-spawn": "^6.0.5",
     "fs-extra": "^7.0.1",
     "lodash": "^4.17.11",

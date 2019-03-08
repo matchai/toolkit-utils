@@ -508,7 +508,10 @@ export default class Project {
    */
   public execute(
     ...executables: Array<
-      Executable | { [key: string]: Executable | undefined } | undefined
+      | Executable
+      | { [key: string]: Executable | null | undefined }
+      | null
+      | undefined
     >
   ): IScriptResult {
     if (executables.length === 0) return { status: 0 };
@@ -537,7 +540,7 @@ export default class Project {
     if (Array.isArray(executable)) {
       [exe, args] = executable;
       options = (executable[2] as SpawnSyncOptions) || options;
-    } else if (typeof executable === "object") {
+    } else if (typeof executable === "object" && executable !== null) {
       const truthyValues = Object.values(executable).filter(Boolean);
       if (truthyValues.length === 0) return { status: 0 };
       exe = this.bin("concurrently");

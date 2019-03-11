@@ -149,6 +149,7 @@ export default class Project {
   get availableScripts(): string[] {
     return fs
       .readdirSync(this.scriptsDir)
+      .filter(script => !script.endsWith(".d.ts"))
       .map(script => script.replace(/\.(js|ts)$/, ""))
       .sort();
   }

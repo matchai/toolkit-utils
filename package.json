@@ -29,7 +29,7 @@
   "dependencies": {
     "@types/nanoid": "^1.2.1",
     "arrify": "^1.0.1",
-    "auth0-toolkit": "0.0.1-alpha.55",
+    "auth0-toolkit": "0.0.1-alpha.57",
     "cross-spawn": "^6.0.5",
     "fs-extra": "^7.0.1",
     "lodash": "^4.17.11",

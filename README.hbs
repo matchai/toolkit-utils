@@ -1,4 +1,4 @@
-<h3 align="center">toolkit-utilities</h3>
+<h3 align="center">toolkit-utils</h3>
 <p align="center">A set of reusable classes and utilities for creating toolkits</p>
 
 ---

@@ -85,3 +85,4 @@ lib/
 
 # Exclude node_modules fixture
 !test/fixtures/node_modules
+!test/fixtures/node_modules/toolkit/lib

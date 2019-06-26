@@ -18,7 +18,7 @@ export type Script = (
  * Type for the returned value of a CLI command.
  */
 export interface IScriptResult {
-  status: number;
+  status: number | null;
   error?: Error;
   previousResults?: IScriptResult[];
   exit?: boolean;

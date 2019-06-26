@@ -237,7 +237,7 @@ export default class Project {
       const result = process.env[name] as string;
       try {
         return JSON.parse(result);
-      } catch {
+      } catch (e) {
         return result;
       }
     }

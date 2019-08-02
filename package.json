@@ -1,6 +1,6 @@
 {
   "name": "toolkit-utils",
-  "version": "0.0.1-alpha.30",
+  "version": "0.0.1-alpha.31",
   "description": "A set of utilities for creating toolkits",
   "author": {
     "name": "Matan Kushner",
@@ -29,7 +29,7 @@
   "dependencies": {
     "@types/nanoid": "^1.2.1",
     "arrify": "^1.0.1",
-    "auth0-toolkit": "0.0.1-alpha.57",
+    "auth0-toolkit": "0.0.1-alpha.60",
     "cross-spawn": "^6.0.5",
     "fs-extra": "^7.0.1",
     "lodash": "^4.17.15",
